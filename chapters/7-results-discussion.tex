@@ -38,21 +38,21 @@ The graph network is constructed using 9835 nodes located in volume 7 from a sim
 
 \begin{figure}[htbp]%
     \centering
-    \subfloat[\centering $x$-$y$ plane view]{{\includegraphics[width=11.5cm]{images/7-results/trackml-endcap-extracted-xy.png} } \label{fig:endcap-trackml-extracted-xy}}%
+    \subfloat[]{{\includegraphics[width=13.5cm]{images/7-results/trackml-endcap-extracted-xy-2.png} } \label{fig:endcap-trackml-extracted-xy}}%
     \hfill
     %\qquad
-    \subfloat[\centering $r$-$z$ plane view]{{\includegraphics[width=13.5cm]{images/7-results/trackml-endcap-extracted-rz.png} } \label{fig:endcap-trackml-extracted-rz}}%
-    \caption{Extracted track candidates post Stage 1 of the GNN algorithm applied to the left Pixel endcap (volume 7) of a simulated TrackML detector event, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane. }%
+    \subfloat[]{{\includegraphics[width=15.5cm]{images/7-results/trackml-endcap-extracted-rz-2.png} } \label{fig:endcap-trackml-extracted-rz}}%
+    \caption{Extracted track candidates post Stage 1 of the GNN algorithm applied to the left Pixel endcap (volume 7) of a simulated TrackML detector event, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane. The total number of extracted track candidates post Stage 1 was 1054.}%
     \label{fig:trackml-results-endcap-extracted}%
 \end{figure}
 
 \begin{figure}[htbp]%
     \centering
-    \subfloat[]{{\includegraphics[width=11.5cm]{images/7-results/trackml-endcap-extracted-xy-v2.png} } \label{fig:endcap-trackml-extracted-xy-v2}}%
+    \subfloat[]{{\includegraphics[width=13.0cm]{images/7-results/trackml-endcap-extracted-xy-v2-2.png} } \label{fig:endcap-trackml-extracted-xy-v2}}%
     \hfill
     %\qquad
-    \subfloat[]{{\includegraphics[width=14cm]{images/7-results/trackml-endcap-extracted-rz-v2.png} } \label{fig:endcap-trackml-extracted-rz-v3}}%
-    \caption{Extracted track candidates post Stage 1 and 2 of the GNN algorithm applied to the left Pixel endcap (volume 7) of a simulated event of the TrackML detector model, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane.}%
+    \subfloat[]{{\includegraphics[width=15.0cm]{images/7-results/trackml-endcap-extracted-rz-v2-2.png} } \label{fig:endcap-trackml-extracted-rz-v3}}%
+    \caption{Extracted track candidates post Stage 1 and 2 of the GNN algorithm applied to the left Pixel endcap (volume 7) of a simulated event of the TrackML detector model, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane. The total number of extracted track candidates post Stage 1 (orange) was 1054 and post Stage 2 was 265 (blue).}%
     \label{fig:trackml-results-endcap-extracted-v2}%
 \end{figure}
 
@@ -222,22 +222,23 @@ An alternative procedure to the “walkthrough” algorithm used in Exa.TrkX’s
 \label{chapter-7-outlook}
 
 
-The application of the GNN algorithm is extended to the Pixel barrel region and the right endcap of the TrackML detector, in order to cover the entire Pixel detector volumes $\{7, 8, 9\}$, with reference to Figure \ref{fig:trackml-detector-image}. The graph network is constructed using 38,365 nodes contained within these volumes from a simulated TrackML event, and 201,748 predicted edges are formed using the FASTrack algorithm \cite{Dmitry-fasttrack-addtest}. For this particular test the same initial $p_{\text{T}}$ cut as executed in Section \ref{performance-eval-endcap-vol-7-start} was used for graph segment generation: $p_{\text{T}} \ge 150$ MeV. Figure \ref{fig:trackml-results-barrel-endcap} illustrates the extracted track candidates after application of the GNN algorithm. 
+The application of the GNN algorithm is extended to the Pixel barrel region and the right endcap of the TrackML detector, in order to cover the entire Pixel detector volumes $\{7, 8, 9\}$, with reference to Figure \ref{fig:trackml-detector-image}. The graph network is constructed using 38,365 nodes contained within these volumes from the same simulated TrackML event used in Section \ref{chapter-7-endcap-results}, and 201,748 predicted edges are formed using the FASTrack algorithm \cite{Dmitry-fasttrack-addtest}. For this particular test the same initial $p_{\text{T}}$ cut as executed in Section \ref{performance-eval-endcap-vol-7-start} was used for graph segment generation: $p_{\text{T}} \ge 150$ MeV. Figure \ref{fig:trackml-results-barrel-endcap} illustrates the extracted track candidates after application of the GNN algorithm. 
 
 It is clear to see from Figure \ref{fig:trackml-results-barrel-endcap-extracted-xy} that track candidates are extracted uniformly across all $ 0^{\circ} \leq \phi \leq 360^{\circ}$ during Stages 1 and 2 of the GNN algorithm. This is as expected due to the rotational symmetry of the detector in the transverse plane. 
 
-Figure \ref{fig:trackml-results-barrel-endcap-extracted-rz} shows the extracted track candidates viewed from the $r$-$z$ plane, where the algorithm works effectively in both the left and right Pixel endcap regions, however the proportion of track candidates extracted in the Pixel barrel is significantly less. During the Stage 1, a total of 1629 track candidates were successfully extracted. During Stage 2 a further 294 track candidates were extracted and in Stage 3 a further 7 track candidates were extracted.
+Figure \ref{fig:trackml-results-barrel-endcap-extracted-rz} shows the extracted track candidates viewed from the $r$-$z$ plane, where the algorithm works effectively in both the left and right Pixel endcap regions, however the proportion of track candidates extracted in the Pixel barrel is significantly less. During Stage 1, a total of 1979 track candidates were successfully extracted. During Stage 2 a further 424 track candidates were extracted and in Stage 3 a further 7 track candidates were extracted.
 
 In Stage 1, we observe track candidates extracted uniformly in both endcaps. This is primarily due to the parallel geometry of detector layers and telescopic trajectory of the corresponding tracks, hence there are far fewer ambiguities to resolve in comparison to the barrel region. In contrast to this, during Stage 2 we observe the majority of track candidates extracted are located at a larger $\theta$ to the $z$-axis (smaller $\eta$) in comparison to Stage 1. This is the transition region between the barrel and endcap layers. We also observe a small proportion of track candidates extracted which are contained only within the barrel region as shown in the Figure \ref{fig:trackml-results-barrel-endcap-extracted-rz}.
 
 
 \begin{figure}[htbp]%
     \centering
-    \subfloat[\centering $x$-$y$ plane view]{{\includegraphics[width=10cm]{images/7-results/trackml-endcap-barrel-extracted-xy.png} } \label{fig:trackml-results-barrel-endcap-extracted-xy}}%
+    \subfloat[]{{\includegraphics[width=11.5cm]{images/7-results/trackml-endcap-barrel-extracted-xy-v2.png} } \label{fig:trackml-results-barrel-endcap-extracted-xy}}%
     \hfill
     %\qquad
-    \subfloat[\centering $r$-$z$ plane view]{{\includegraphics[width=14.5cm]{images/7-results/trackml-endcap-barrel-extracted-rz.png} } \label{fig:trackml-results-barrel-endcap-extracted-rz}}%
-    \caption{Extracted track candidates post application of the iterative GNN algorithm onto the Pixel detector of the TrackML model. Track candidates are iteratively extracted after each stage of the GNN algorithm, shown by the legend.}%
+    \centering
+    \subfloat[]{{\includegraphics[width=15cm]{images/7-results/trackml-endcap-barrel-extracted-rz-v2.png} } \label{fig:trackml-results-barrel-endcap-extracted-rz}}%
+    \caption{Extracted track candidates post application of the iterative GNN algorithm onto the Pixel detector of the TrackML model. Track candidates are iteratively extracted after each stage of the GNN algorithm, shown by the legend. The total number of extracted track candidates at Stage 1 (orange) was 1979, at Stage 2 was 424 (blue) and at Stage 3 (green) was 7.}%
     \label{fig:trackml-results-barrel-endcap}%
 \end{figure}
 
@@ -266,7 +267,7 @@ The confusion matrix for Stage 2 of the GNN algorithm applied to the Pixel barre
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.79\textwidth]{images/7-results/confusion_matrix_barrel_stage_2.png}
-    \caption{Confusion matrix for Stage 1 of the GNN algorithm applied to the Pixel barrel and endcap of the TrackML detector model.}
+    \caption{Confusion matrix for Stage 2 of the GNN algorithm applied to the Pixel barrel and endcap of the TrackML detector model.}
     \label{fig:confusion-matrix-barrel-endcap-stage-2}%
 \end{figure}
 
@@ -313,7 +314,7 @@ For Stage 2, the TPR for identification of correct outlier edges, and hence the 
 
 \subsection{Improvement for Extrapolation in r-z Plane}
 
-In general, a track state in $r$-$z$ plane is defined as a track position at some reference surface (constant radius $r$ or constant $z$ position) and the inverse track inclination angle as outlined in Section \ref{chapter-6-end-of-derivation}. Due to the orientation of the detector layers, the extrapolation can result in a change of reference surface type. One such example is an extrapolation from the Pixel barrel layer at constant $r$ to Pixel endcap layer at constant $z$. Naturally, there are four possible cases for extrapolation; barrel-to-barrel, barrel-to-endcap, endcap-to-barrel and endcap-to-endcap, and each case should be considered individually. Figure \ref{fig:improvement-extrapolation} shows an illustration of the extrapolation from a barrel to endcap layer.
+In general, a track state in $r$-$z$ plane is defined as a track position at some reference surface (constant radius $r$ or constant $z$ position) and the inverse track inclination angle as outlined in Eq \ref{eqn:kf-track-fit-initialised-state-rz}. Due to the orientation of the detector layers, the extrapolation can result in a change of reference surface type. One such example is an extrapolation from the Pixel barrel layer at constant $r$ to Pixel endcap layer at constant $z$, as illustrated in Figure \ref{fig:improvement-extrapolation}. Naturally, there are four possible cases for extrapolation; barrel-to-barrel, barrel-to-endcap, endcap-to-barrel and endcap-to-endcap, and each case should be considered individually.
 
 
 \begin{figure}[htbp]
@@ -349,7 +350,7 @@ Exploring this general case of extrapolation in the $r$-$z$ plane is one such en
 
 \subsection{Software Optimisations}
 
-Several computational refinements and software optimisations that can be done to in order to improve the implementation of the GNN algorithm are discussed here.
+Several computational refinements and software optimisations that can be done in order to improve the implementation of the GNN algorithm are discussed here.
 
 With regards to algorithm implementation, the Python library \textit{Numpy} \cite{harris2020array} is utilised for all matrix computations between track state vectors. This allows for scalability and reduces processing time, specifically for highly dense environments with large numbers of graph nodes. However, in general many other optimisations can be implemented in order to eliminate redundancies in code. These include using the most efficient data structures appropriate to the problem, avoiding unnecessary Input/Output such that the algorithm only reads and writes to files when absolutely necessary, as well as reducing code complexity.
 
