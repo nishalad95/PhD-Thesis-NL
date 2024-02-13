@@ -308,13 +308,20 @@ For Stage 2, the TPR for identification of correct outlier edges, and hence the 
 
 
 
-\section{Improvements and Other Approaches}
+\section{Refinements and Other Approaches}
+
+
+\subsection{Current Limitations and Refinements}
+
+\textbf{TODO Here!!}
+Possibly move this to chapter 8 outlook - further work and discussion, current limitations and refinements. These points have been scattered in the main text, this section is mainly a summary of them to present in a easible readable manner. 
+clustering k=1 scenario, pragmatic choices etc, the density of barrel hits and second set of data, retraining certain thresholds and analysing the performance of the algorithm on the ITk geometry to give an indication ... with more time permitting further research and analysis can be conducted to investigate possible improvements. Other considerations and avenues to explore have been discussed below...
 
 
 
-\subsection{Improvement for Extrapolation in r-z Plane}
+\subsection{Extrapolation in r-z Plane}
 
-In general, a track state in $r$-$z$ plane is defined as a track position at some reference surface (constant radius $r$ or constant $z$ position) and the inverse track inclination angle as outlined in Eq \ref{eqn:kf-track-fit-initialised-state-rz}. Due to the orientation of the detector layers, the extrapolation can result in a change of reference surface type. One such example is an extrapolation from the Pixel barrel layer at constant $r$ to Pixel endcap layer at constant $z$, as illustrated in Figure \ref{fig:improvement-extrapolation}. Naturally, there are four possible cases for extrapolation; barrel-to-barrel, barrel-to-endcap, endcap-to-barrel and endcap-to-endcap, and each case should be considered individually.
+With reference to Eq \ref{eqn:kf-track-fit-initialised-state-rz} a track state in the $r$-$z$ plane is defined as a track position at some reference surface (in general constant radius $r$ or constant $z$ position) and the inverse track inclination angle. Due to the orientation of the detector layers, the extrapolation can result in a change of reference surface type. One such example is an extrapolation from the Pixel barrel layer at constant $r$ to Pixel endcap layer at constant $z$, as illustrated in Figure \ref{fig:improvement-extrapolation}. Naturally, there are four possible cases for extrapolation; barrel-to-barrel, barrel-to-endcap, endcap-to-barrel and endcap-to-endcap, and each case should be considered individually.
 
 
 \begin{figure}[htbp]
