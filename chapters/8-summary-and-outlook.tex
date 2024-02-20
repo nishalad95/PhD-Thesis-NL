@@ -6,6 +6,16 @@
 \chapter{Summary and Outlook}
 \label{chapter-8}
 
+%\subsection{Current Limitations and Refinements}
+
+%\textbf{TODO Here!!}
+%Possibly move this to chapter 8 outlook - further work and discussion, current limitations and refinements. These points have been scattered in the main text, this section is mainly a summary of them to present in a easible readable manner. clustering k=1 scenario, pragmatic choices etc, the density of barrel hits and second set of data, retraining certain thresholds and analysing the performance of the algorithm on the ITk geometry to give an indication ... with more time permitting further research and analysis can be conducted to investigate possible improvements. Other considerations and avenues to explore have been discussed below...
+
+
+
+
+
+
 % 1. Intro & background
 
 The current algorithms employed to reconstruct tracks for High-Energy particle detectors have proven to be very powerful. These methods include seeded track following and the combinatorial KF. However, they are not designed to handle the conditions presented by extreme environments such as the HL-LHC, as these approaches do not scale well as the seed number grows. As discussed in Chapter \ref{chapter-2}, the task of track reconstruction becomes increasingly difficult as the luminosity increases. The collision rate and hence hit occupancy will also grow significantly during future upgrades of the LHC program. Therefore, novel and precise tracking methodologies, as well as efficient use of computing power, are paramount for track reconstruction. The heart of the problem tackles the simultaneous consideration of reducing the amount of CPU usage, and hence the environmental impact, as well as maintaining the ability to reconstruct tracks with minimal loss in efficiency. As such, enhancements in track reconstruction algorithms are imperative for the future growth of particle detector experiments. 
@@ -17,9 +27,9 @@ The use of ML algorithms for track reconstruction has provided a route to develo
 
 When constructing a graph network for track reconstruction, an essential aspect to consider is the ability to identify compatible hit connections to build graph edges. Chapter \ref{chapter-4} successfully demonstrates a methodology to achieve this, whereby a ML-based algorithm is developed to predict if a pair of hits belong to the same track. This process is essential for efficient construction of the graph network for track reconstruction, as it successfully reduces the number of fake edges and hence increases the accuracy in predicting compatible hit-pairs. This method also reduces the number of computations required and propagates these benefits to downstream algorithms within the track reconstruction software.
 
-The implementation of the ML-based predictor begins with the exploitation of input hit features in its design, namely Pixel cluster width and inverse track inclination. The algorithm employs the use of Bayesian analysis and Kernel Density Estimates to discriminate between hit-pair classes. The implementation of the classifier’s predictions as a LUT is advantageous here in order to reduce computational overheads, which bodes well for use in realistic detectors.
+The implementation of the ML-based predictor begins with the exploitation of input hit features in its design, namely pixel cluster width and inverse track inclination. The algorithm employs the use of Bayesian analysis and Kernel Density Estimates to discriminate between hit-pair classes. The implementation of the classifier’s predictions as a LUT is advantageous here in order to reduce computational overheads, which bodes well for use in realistic detectors.
 
-The application of the ML-based classifier was used for seed selection in the ATLAS ID. It has successfully optimised the HLT ID track seeding software for ATLAS Run-3 and beyond, by reducing the number of fake track seeds and provided significant savings in computing resources. The trained predictor in the form of a LUT yields 2.3$\times$ speed-up with minimal loss in efficiency (1.1\%) at $< \mu >$= 80 compared with the standard trigger tracking. 
+The application of the ML-based classifier was used for seed selection in the ATLAS ID. It has successfully optimised the HLT ID track seeding software for ATLAS Run-3 and beyond, by reducing the number of fake track seeds and provided significant savings in computing resources. The trained predictor in the form of a LUT yields 2.3$\times$ speed-up with minimal loss in efficiency (1.1\%) at $\langle \mu \rangle$ = 80 compared with the standard trigger tracking. 
 
 %The developed ML framework is advantageous for many reasons.
 

@@ -5,7 +5,7 @@
 \chapter{Application of the GNN Algorithm to the TrackML Model}
 \label{chapter-7}
 
-This chapter focuses on the application of the GNN algorithm to the Pixel endcap and Pixel barrel regions of the TrackML detector. This chapter is organised as follows. Section \ref{chapter-7-endcap-results} presents the results of the GNN algorithm applied to the Pixel endcap region of the TrackML detector. The performance of the algorithm is evaluated and track reconstruction efficiency metrics are discussed. Section \ref{chapter-7-outlook} presents preliminary results and challenges faced when applying the GNN algorithm onto the full Pixel detector of the TrackML geometry, including the barrel region. Potential software optimisations and other approaches explored are also discussed, followed by several improvements that would be necessary to implement within the GNN algorithm in order for it to be considered for proper online usage for track reconstruction in particle detectors.
+This chapter focuses on the application of the GNN algorithm to the pixel endcap and pixel barrel regions of the TrackML detector. This chapter is organised as follows. Section \ref{chapter-7-endcap-results} presents the results of the GNN algorithm applied to the pixel endcap region of the TrackML detector. The performance of the algorithm is evaluated and track reconstruction efficiency metrics are discussed. Section \ref{chapter-7-outlook} presents preliminary results and challenges faced when applying the GNN algorithm onto the full pixel detector of the TrackML geometry, including the barrel region. Potential software optimisations and other approaches explored are also discussed, followed by several improvements that would be necessary to implement within the GNN algorithm in order for it to be considered for proper online usage for track reconstruction in particle detectors.
 
 
 
@@ -16,22 +16,37 @@ This chapter focuses on the application of the GNN algorithm to the Pixel endcap
 \subsection{Performance Evaluation on Volume 7}
 \label{performance-eval-endcap-vol-7-start}
 
-The GNN algorithm is first applied to volume 7 of the TrackML detector model (see Figure \ref{fig:trackml-detector-image}), by isolating the left Pixel endcap. The geometry in the endcap consists of parallel silicon layers and is the simplest part of the detector to begin reconstruction. An example TrackML simulated event is shown in Figure \ref{fig:trackml-results-endcap-nodes-sim}.
+The GNN algorithm is first applied to volume 7 of the TrackML detector model (see Figure \ref{fig:trackml-detector-image}), by isolating the left pixel endcap. The geometry in the endcap consists of parallel silicon layers and is the simplest part of the detector to begin reconstruction. An example TrackML simulated event is shown in Figure \ref{fig:trackml-results-endcap-nodes-sim}.
 
 \begin{figure}[htbp!] 
     \centering
-    \subfloat[$x$-$y$ plane view]{%
-        \includegraphics[width=0.50\linewidth]{images/7-results/trackml-endcap-nodes-xy.png}%
+    \subfloat[]{%
+        \includegraphics[width=0.85\linewidth]{images/7-results/trackml-endcap-nodes-xy-2.png}%
         \label{fig:endcap-trackml-sim-xy}%
         }%
     \hfill%
-    \subfloat[$r$-$z$ plane view]{%
-        \includegraphics[width=0.48\linewidth]{images/7-results/trackml-endcap-nodes-rz.png}%
+    %\qquad
+    \subfloat[]{%
+        \includegraphics[width=0.85\linewidth]{images/7-results/trackml-endcap-nodes-rz-2.png}%
         \label{fig:endcap-trackml-sim-rz}%
         }%
-    \caption{Event simulation of the TrackML detector isolating volume 7.}
+    \caption{Event simulation of the TrackML detector, isolating hits located in volume 7 (left pixel endcap).}
     \label{fig:trackml-results-endcap-nodes-sim}
 \end{figure}
+
+
+% \begin{figure}[htbp]%
+%     \centering
+%     \subfloat[]{{\includegraphics[width=13.5cm]{images/7-results/trackml-endcap-extracted-xy-2.png} } \label{fig:endcap-trackml-extracted-xy}}%
+%     \hfill
+%     %\qquad
+%     \subfloat[]{{\includegraphics[width=15.5cm]{images/7-results/trackml-endcap-extracted-rz-2.png} } \label{fig:endcap-trackml-extracted-rz}}%
+%     \caption{Extracted track candidates post Stage 1 of the GNN algorithm applied to the left Pixel endcap (volume 7) of a simulated TrackML detector event, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane. The total number of extracted track candidates post Stage 1 was 1054.}%
+%     \label{fig:trackml-results-endcap-extracted}%
+% \end{figure}
+
+
+
 
 
 The graph network is constructed using 9835 nodes located in volume 7 from a simulated TrackML event and 18,184 predicted edges using the FASTrack algorithm \cite{Dmitry-fasttrack-addtest}, as described in Section \ref{chapter-6-data-prep}. The FASTrack algorithm uses several cuts on track parameters when the graph segments are generated. For this particular test the following cut was used: $p_{\text{T}} \ge 150$ MeV. Using the same generated graph, this cut was then increased to $p_{\text{T}} \ge 1$ GeV in order to investigate the reconstruction efficiency for different levels of curvature. Track state estimates, $X_{ij}$, are constructed using the model as described in Section \ref{constructing-track-states}. Figure \ref{fig:trackml-results-endcap-extracted} illustrates the extracted track candidates post Stage 1 of application of the GNN algorithm, where 1054 track candidates were successfully extracted. Figure \ref{fig:trackml-results-endcap-extracted-v2} shows the extracted track candidates post Stage 2, where a further 265 candidates were extracted.
@@ -42,7 +57,7 @@ The graph network is constructed using 9835 nodes located in volume 7 from a sim
     \hfill
     %\qquad
     \subfloat[]{{\includegraphics[width=15.5cm]{images/7-results/trackml-endcap-extracted-rz-2.png} } \label{fig:endcap-trackml-extracted-rz}}%
-    \caption{Extracted track candidates post Stage 1 of the GNN algorithm applied to the left Pixel endcap (volume 7) of a simulated TrackML detector event, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane. The total number of extracted track candidates post Stage 1 was 1054.}%
+    \caption{Extracted track candidates post Stage 1 of the GNN algorithm applied to the left pixel endcap (volume 7) of a simulated TrackML detector event, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane. The total number of extracted track candidates post Stage 1 was 1054.}%
     \label{fig:trackml-results-endcap-extracted}%
 \end{figure}
 
@@ -52,7 +67,7 @@ The graph network is constructed using 9835 nodes located in volume 7 from a sim
     \hfill
     %\qquad
     \subfloat[]{{\includegraphics[width=15.0cm]{images/7-results/trackml-endcap-extracted-rz-v2-2.png} } \label{fig:endcap-trackml-extracted-rz-v3}}%
-    \caption{Extracted track candidates post Stage 1 and 2 of the GNN algorithm applied to the left Pixel endcap (volume 7) of a simulated event of the TrackML detector model, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane. The total number of extracted track candidates post Stage 1 (orange) was 1054 and post Stage 2 was 265 (blue).}%
+    \caption{Extracted track candidates post Stage 1 and 2 of the GNN algorithm applied to the left pixel endcap (volume 7) of a simulated event of the TrackML detector model, shown from the view of the a) $x$-$y$ plane and b) $r$-$z$ plane. The total number of extracted track candidates post Stage 1 (orange) was 1054 and post Stage 2 was 265 (blue).}%
     \label{fig:trackml-results-endcap-extracted-v2}%
 \end{figure}
 
@@ -75,7 +90,7 @@ The TPR (and recall) for identification of correct outlier edges achieved was 90
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.78\textwidth]{images/7-results/confusion_matrix_endcap_stage_1.png}
-    \caption{Confusion matrix for Stage 1 of the GNN algorithm applied to the Pixel endcap (volume 7) of the TrackML detector model.}
+    \caption{Confusion matrix for Stage 1 of the GNN algorithm applied to the pixel endcap (volume 7) of the TrackML detector model.}
     \label{fig:confusion-matrix-endcap-stage-1}%
 \end{figure}
   
@@ -83,7 +98,7 @@ The TPR (and recall) for identification of correct outlier edges achieved was 90
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.78\textwidth]{images/7-results/confusion_matrix_endcap_stage_2.png}
-    \caption{Confusion matrix for Stage 2 of the GNN algorithm applied to the Pixel endcap (volume 7) of the TrackML detector model.}
+    \caption{Confusion matrix for Stage 2 of the GNN algorithm applied to the pixel endcap (volume 7) of the TrackML detector model.}
     \label{fig:confusion-matrix-endcap-stage-2}%
 \end{figure}
 
@@ -106,11 +121,11 @@ The track reconstruction efficiency, $\epsilon$, provides an indication of the p
 
 where $N_R$ is the number of reconstructable reference tracks and $n_R$ the number of successfully reconstructed reference tracks. Track reconstruction efficiency is calculated by first dissociating graph nodes back to hits, which means that a track candidate is now a collection of hits from several truth particles. A reconstructable reference track is defined as a fully contained track within the volume of interest. As the TrackML detector can produce up to four hits per detector layer, we define a fully contained track to have at least twelve hits within the region of interest. Particles with twelve or more hits and proposed tracks with twelve or more hits are considered. Successfully reconstructed reference tracks are defined as having at least 50\% of its hits from the same truth particle, $N_{hits}$. If $N_{hits} \geq 0.5 \times N_{ref}$, where $N_{ref}$ is the number of reference hits in the volume of interest, then the truth particle reference track is considered as reconstructed. This definition coincides with the definition of reconstruction efficiency stated in the TrackML competition \cite{kaggle-trackml}.
 
-Initially, all reference tracks with $p_{\text{T}} \ge$ 150 MeV are selected and the efficiency is calculated for this. The cut is then increased to select reference tracks with $p_{\text{T}} \ge$ 1 GeV. Table \ref{tab:trackml-track-recon-effs} summarises the track reconstruction efficiencies obtained for fully contained MC truth tracks within volume 7 of the TrackML Pixel detector.
+Initially, all reference tracks with $p_{\text{T}} \ge$ 150 MeV are selected and the efficiency is calculated for this. The cut is then increased to select reference tracks with $p_{\text{T}} \ge$ 1 GeV. Table \ref{tab:trackml-track-recon-effs} summarises the track reconstruction efficiencies obtained for fully contained MC truth tracks within volume 7 of the TrackML pixel detector.
 
 
 \begin{table}[htbp]
-\caption{Summary of track reconstruction efficiencies obtained for fully contained MC truth tracks within volume 7 of the TrackML Pixel detector, which have been extracted using the GNN iterative algorithm developed. $n_R$ is the number of successfully reconstructed reference tracks, $N_R$ is the total number of reconstructable reference tracks and $\epsilon$ is the track reconstruction efficiency. }
+\caption{Summary of track reconstruction efficiencies obtained for fully contained MC truth tracks within volume 7 of the TrackML pixel detector, which have been extracted using the GNN iterative algorithm developed. $n_R$ is the number of successfully reconstructed reference tracks, $N_R$ is the total number of reconstructable reference tracks and $\epsilon$ is the track reconstruction efficiency. }
 
 \begin{center}
 \begin{tabular}{cccc}
@@ -145,8 +160,8 @@ The purity distributions are shown in Figure \ref{fig:trackml-results-endcap-pur
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.75\textwidth]{images/7-results/endcap-purity-log.png}
-    \caption{Purity distributions for extracted track candidates after application of the GNN algorithm for track reconstruction within volume 7 of the TrackML Pixel detector with $p_{\text{T}} \geq$ 150MeV.}
+    \includegraphics[width=0.85\textwidth]{images/7-results/endcap-purity-log.png}
+    \caption{Purity distributions for extracted track candidates after application of the GNN algorithm for track reconstruction within volume 7 of the TrackML pixel detector with $p_{\text{T}} \geq$ 150 MeV.}
     \label{fig:trackml-results-endcap-purity}%
 \end{figure}
 
@@ -164,7 +179,7 @@ Executing the GNN algorithm on 50 simulated TrackML events, the average track re
 
 \subsection{Execution Times}
 
-The GNN algorithm was executed on a MacOS machine, M1 Pro chip, 16GB RAM, with no multi-threaded functions. The average minimum execution time for the GNN algorithm to process 1 event in volume 7 of the TrackML detector, across a total of 50 simulated events, was 45.6s. Table \ref{tab:trackml-endcap-execution-times} and Figure \ref{fig:execution-time-endcap-1} show the breakdown of execution time for each stage of the GNN algorithm. The initialization of the graph network takes up the majority of the execution time, while the remaining algorithmic components comprise 15.9s in execution time. Graph network initialization comprises a conversion of TrackML hit data to nodes and edges, as well as construction of track state estimates $X_{ij}$ and covariances $C_{ij}$. Reading and writing into the graph network implemented using the NetworkX library contributes a significant proportion of execution time, whereas the execution time for each stage of the GNN algorithm, as well as track extraction, is notably small.
+The GNN algorithm was executed on a MacOS machine, M1 Pro chip, 16 GB RAM, with no multithreaded functions. The average minimum execution time for the GNN algorithm to process 1 event in volume 7 of the TrackML detector, across a total of 50 simulated events, was 45.6 s. Table \ref{tab:trackml-endcap-execution-times} and Figure \ref{fig:execution-time-endcap-1} show the breakdown of execution time for each stage of the GNN algorithm. The initialization of the graph network takes up the majority of the execution time, while the remaining algorithmic components comprise 15.9 s in execution time. Graph network initialization comprises a conversion of TrackML hit data to nodes and edges, as well as construction of track state estimates $X_{ij}$ and covariances $C_{ij}$. Reading and writing into the graph network implemented using the NetworkX library contributes a significant proportion of execution time, whereas the execution time for each stage of the GNN algorithm, is notably small.
 
 \begin{table}[!htbp]
 \caption{Breakdown of execution time and cumulative execution time for each stage of the GNN algorithm applied to volume 7 of the TrackML detector.}
@@ -186,7 +201,7 @@ Track Extraction 2              & 4.4   & 45.6   &  9.6    \\
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{images/7-results/execution-time-endcap-1.png}
+    \includegraphics[width=0.9\textwidth]{images/7-results/execution-time-endcap-1.png}
     \caption{Pie-chart of execution time for each stage of the GNN algorithm applied to volume 7 of the TrackML detector.}
     \label{fig:execution-time-endcap-1}%
 \end{figure}
@@ -203,7 +218,7 @@ Track Extraction 2              & 4.4   & 45.6   &  9.6    \\
 
 \subsection{Comparison with a Deep Learning Approach}
 
-The iterative graph-based method developed in this thesis can be compared to the graph-based method used by the Exa.TrkX group \cite{Caillou:2815578}. Their approach employs deep geometric learning of track patterns using MLPs and GNNs, as well as a graph segmentation process to identify tracks. The GNN model has an encode-process-decode architecture. The encoder is implemented using two MLPs; one for node features and one for edge features, encoding features into a D-dimensional latent space. At the decode stage, another MLP transforms the latent features of each edge into an edge classification score, representing the probability that the edge portrays two successive space points of a track. The last stage of their pipeline is track reconstruction based on the edge classification score and the graph topology. This process uses a “walkthrough” algorithm, tracing each part of the graph network and selecting the most probable edge, thereby segmenting the graph network in order to separate tracks.
+The iterative graph-based method developed in this thesis can be compared to the graph-based method used by the Exa.TrkX group \cite{Caillou:28155782}. Their approach employs deep geometric learning of track patterns using MLPs and GNNs, as well as a graph segmentation process to identify tracks. The GNN model has an encode-process-decode architecture. The encoder is implemented using two MLPs; one for node features and one for edge features, encoding features into a D-dimensional latent space. At the decode stage, another MLP transforms the latent features of each edge into an edge classification score, representing the probability that the edge portrays two successive space-points of a track. The last stage of their pipeline is track reconstruction based on the edge classification score and the graph topology. This process uses a “walkthrough” algorithm, tracing each part of the graph network and selecting the most probable edge, thereby segmenting the graph network in order to separate tracks.
 
 A key difference in the implementation of Exa.TrkX’s method with the method presented in this thesis, is that training of MLPs is executed. This process requires vast amounts of computing resources as their models are trained using a GPU farm. Whereas, the model developed in this thesis is executed on a local CPU environment, requiring far less computational resources and saving energy.
 
@@ -222,11 +237,11 @@ An alternative procedure to the “walkthrough” algorithm used in Exa.TrkX’s
 \label{chapter-7-outlook}
 
 
-The application of the GNN algorithm is extended to the Pixel barrel region and the right endcap of the TrackML detector, in order to cover the entire Pixel detector volumes $\{7, 8, 9\}$, with reference to Figure \ref{fig:trackml-detector-image}. The graph network is constructed using 38,365 nodes contained within these volumes from the same simulated TrackML event used in Section \ref{chapter-7-endcap-results}, and 201,748 predicted edges are formed using the FASTrack algorithm \cite{Dmitry-fasttrack-addtest}. For this particular test the same initial $p_{\text{T}}$ cut as executed in Section \ref{performance-eval-endcap-vol-7-start} was used for graph segment generation: $p_{\text{T}} \ge 150$ MeV. Figure \ref{fig:trackml-results-barrel-endcap} illustrates the extracted track candidates after application of the GNN algorithm. 
+The application of the GNN algorithm is extended to the pixel barrel region and the right endcap of the TrackML detector, in order to cover the entire pixel detector volumes $\{7, 8, 9\}$, with reference to Figure \ref{fig:trackml-detector-image}. The graph network is constructed using 38,365 nodes contained within these volumes from the same simulated TrackML event used in Section \ref{chapter-7-endcap-results}, and 201,748 predicted edges are formed using the FASTrack algorithm \cite{Dmitry-fasttrack-addtest}. For this particular test the same initial $p_{\text{T}}$ cut as executed in Section \ref{performance-eval-endcap-vol-7-start} was used for graph segment generation: $p_{\text{T}} \ge 150$ MeV. Figure \ref{fig:trackml-results-barrel-endcap} illustrates the extracted track candidates after application of the GNN algorithm. 
 
 It is clear to see from Figure \ref{fig:trackml-results-barrel-endcap-extracted-xy} that track candidates are extracted uniformly across all $ 0^{\circ} \leq \phi \leq 360^{\circ}$ during Stages 1 and 2 of the GNN algorithm. This is as expected due to the rotational symmetry of the detector in the transverse plane. 
 
-Figure \ref{fig:trackml-results-barrel-endcap-extracted-rz} shows the extracted track candidates viewed from the $r$-$z$ plane, where the algorithm works effectively in both the left and right Pixel endcap regions, however the proportion of track candidates extracted in the Pixel barrel is significantly less. During Stage 1, a total of 1979 track candidates were successfully extracted. During Stage 2 a further 424 track candidates were extracted and in Stage 3 a further 7 track candidates were extracted.
+Figure \ref{fig:trackml-results-barrel-endcap-extracted-rz} shows the extracted track candidates viewed from the $r$-$z$ plane, where the algorithm works effectively in both the left and right pixel endcap regions, however the proportion of track candidates extracted in the pixel barrel is significantly less. During Stage 1, a total of 1979 track candidates were successfully extracted. During Stage 2 a further 424 track candidates were extracted and in Stage 3 a further 7 track candidates were extracted.
 
 In Stage 1, we observe track candidates extracted uniformly in both endcaps. This is primarily due to the parallel geometry of detector layers and telescopic trajectory of the corresponding tracks, hence there are far fewer ambiguities to resolve in comparison to the barrel region. In contrast to this, during Stage 2 we observe the majority of track candidates extracted are located at a larger $\theta$ to the $z$-axis (smaller $\eta$) in comparison to Stage 1. This is the transition region between the barrel and endcap layers. We also observe a small proportion of track candidates extracted which are contained only within the barrel region as shown in the Figure \ref{fig:trackml-results-barrel-endcap-extracted-rz}.
 
@@ -238,7 +253,7 @@ In Stage 1, we observe track candidates extracted uniformly in both endcaps. Thi
     %\qquad
     \centering
     \subfloat[]{{\includegraphics[width=15cm]{images/7-results/trackml-endcap-barrel-extracted-rz-v2.png} } \label{fig:trackml-results-barrel-endcap-extracted-rz}}%
-    \caption{Extracted track candidates post application of the iterative GNN algorithm onto the Pixel detector of the TrackML model. Track candidates are iteratively extracted after each stage of the GNN algorithm, shown by the legend. The total number of extracted track candidates at Stage 1 (orange) was 1979, at Stage 2 was 424 (blue) and at Stage 3 (green) was 7.}%
+    \caption{Extracted track candidates post application of the iterative GNN algorithm onto the pixel detector of the TrackML model. Track candidates are iteratively extracted after each stage of the GNN algorithm, shown by the legend. The total number of extracted track candidates at Stage 1 (orange) was 1979, at Stage 2 was 424 (blue) and at Stage 3 (green) was 7.}%
     \label{fig:trackml-results-barrel-endcap}%
 \end{figure}
 
@@ -249,7 +264,7 @@ In Stage 1, we observe track candidates extracted uniformly in both endcaps. Thi
 
 \subsection{Confusion Matrices}
 
-The following confusion matrices depict the prediction summary of the GNN algorithm onto the TrackML simulated event, where predicted class 1 indicates the prediction of outlier edges with respect to MC truth and predicted class 0 indicates the prediction of good edges to remain active in the network. The confusion matrix for Stage 1 of the GNN algorithm applied to the Pixel barrel and endcap regions is shown in Figure \ref{fig:confusion-matrix-barrel-endcap-stage-1}.
+The following confusion matrices depict the prediction summary of the GNN algorithm onto the TrackML simulated event, where predicted class 1 indicates the prediction of outlier edges with respect to MC truth and predicted class 0 indicates the prediction of good edges to remain active in the network. The confusion matrix for Stage 1 of the GNN algorithm applied to the pixel barrel and endcap regions is shown in Figure \ref{fig:confusion-matrix-barrel-endcap-stage-1}.
 
 
 The TPR for identification of correct outlier edges achieved was 92.3\%, and the True Negative Rate (TNR) in identification of good edges achieved was 84.9\%. With respect to MC ground truth, the proportion of correct outlier edges identified during Stage 1 of the GNN algorithm, and hence the precision, was found to be 95.6\%. The recall in correct outlier edges identified during Stage 1 was 92.3\%. Similar to Section \ref{confusion-matrices-endcap-trackml} these results indicate that the GMR technique of the GNN-algorithm works well for resolving ambiguities in the graph network.
@@ -257,17 +272,17 @@ The TPR for identification of correct outlier edges achieved was 92.3\%, and the
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.79\textwidth]{images/7-results/confusion_matrix_barrel_stage_1.png}
-    \caption{Confusion matrix for Stage 1 of the GNN algorithm applied to the Pixel barrel and endcap of the TrackML detector model.}
+    \caption{Confusion matrix for Stage 1 of the GNN algorithm applied to the pixel barrel and endcap of the TrackML detector model.}
     \label{fig:confusion-matrix-barrel-endcap-stage-1}%
 \end{figure}
 
-The confusion matrix for Stage 2 of the GNN algorithm applied to the Pixel barrel and endcap regions is shown in Figure \ref{fig:confusion-matrix-barrel-endcap-stage-2}.
+The confusion matrix for Stage 2 of the GNN algorithm applied to the pixel barrel and endcap regions is shown in Figure \ref{fig:confusion-matrix-barrel-endcap-stage-2}.
 
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.79\textwidth]{images/7-results/confusion_matrix_barrel_stage_2.png}
-    \caption{Confusion matrix for Stage 2 of the GNN algorithm applied to the Pixel barrel and endcap of the TrackML detector model.}
+    \caption{Confusion matrix for Stage 2 of the GNN algorithm applied to the pixel barrel and endcap of the TrackML detector model.}
     \label{fig:confusion-matrix-barrel-endcap-stage-2}%
 \end{figure}
 
@@ -310,24 +325,15 @@ For Stage 2, the TPR for identification of correct outlier edges, and hence the 
 
 \section{Refinements and Other Approaches}
 
-
-\subsection{Current Limitations and Refinements}
-
-\textbf{TODO Here!!}
-Possibly move this to chapter 8 outlook - further work and discussion, current limitations and refinements. These points have been scattered in the main text, this section is mainly a summary of them to present in a easible readable manner. 
-clustering k=1 scenario, pragmatic choices etc, the density of barrel hits and second set of data, retraining certain thresholds and analysing the performance of the algorithm on the ITk geometry to give an indication ... with more time permitting further research and analysis can be conducted to investigate possible improvements. Other considerations and avenues to explore have been discussed below...
-
-
-
 \subsection{Extrapolation in r-z Plane}
 
-With reference to Eq \ref{eqn:kf-track-fit-initialised-state-rz} a track state in the $r$-$z$ plane is defined as a track position at some reference surface (in general constant radius $r$ or constant $z$ position) and the inverse track inclination angle. Due to the orientation of the detector layers, the extrapolation can result in a change of reference surface type. One such example is an extrapolation from the Pixel barrel layer at constant $r$ to Pixel endcap layer at constant $z$, as illustrated in Figure \ref{fig:improvement-extrapolation}. Naturally, there are four possible cases for extrapolation; barrel-to-barrel, barrel-to-endcap, endcap-to-barrel and endcap-to-endcap, and each case should be considered individually.
+With reference to Eq \ref{eqn:kf-track-fit-initialised-state-rz} a track state in the $r$-$z$ plane is defined as a track position at some reference surface (in general constant radius $r$ or constant $z$ position) and the inverse track inclination angle. Due to the orientation of the detector layers, the extrapolation can result in a change of reference surface type. One such example is an extrapolation from the pixel barrel layer at constant $r$ to pixel endcap layer at constant $z$, as illustrated in Figure \ref{fig:improvement-extrapolation}. Naturally, there are four possible cases for extrapolation; barrel-to-barrel, barrel-to-endcap, endcap-to-barrel and endcap-to-endcap, and each case should be considered individually.
 
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{images/7-results/improvement-extrapolation.png}
-    \caption{Illustration of track state extrapolation from node A located in a barrel layer at constant radius $r$, to the target node, node T located in an endcap layer at constant $z$-position.}
+    \caption{Illustration of track state extrapolation (shown by the red arrow) from node A located in a barrel layer at constant radius $r$, to the target node, node T located in an endcap layer at constant $z$-position.}
     \label{fig:improvement-extrapolation}%
 \end{figure}
 
@@ -400,8 +406,8 @@ A technique such as Community Detection is advantageous for a problem such as tr
 
 \section{Conclusion}
 
-It is promising to see that the GNN algorithm works on simulated particle collision events produced by the TrackML detector, which have significant track multiplicity. The proposed GNN algorithm is successful in identifying outlier edge connections in an iterative manner, as well as successful in extracting track candidates for the endcap regions. It is an encouraging result that this methodology provides a high performance for fully contained tracks within the endcap volume, achieving 93.3\% average track reconstruction efficiency for tracks with $p_{\text{T}} >$ 1GeV averaged over 50 simulated TrackML events. The average track purity and average particle purity achieved were 99.0\% for both quantities. Overall, the application to the endcap region is highly successful.
+It is promising to see that the GNN algorithm works on simulated particle collision events produced by the TrackML detector, which have significant track multiplicity. The proposed GNN algorithm is successful in identifying outlier edge connections in an iterative manner, as well as successful in extracting track candidates for the endcap regions. It is an encouraging result that this methodology provides a high performance for fully contained tracks within the endcap volume, achieving 93.3\% average track reconstruction efficiency for tracks with $p_{\text{T}} >$ 1 GeV averaged over 50 simulated TrackML events. The average track purity and average particle purity achieved were 99.0\% for both quantities. Overall, the application to the endcap region is highly successful.
 
 Neighbourhood complexity is inferred by the network, this is observed as the GNN algorithm automatically initiates the pattern recognition process in regions where outlier connections are easily identifiable. The network starts with low density regions (both endcap regions) and gradually progresses towards higher density areas (the transition between the barrel and endcap layers). This shows that the GNN algorithm behaves as expected.
 
-However the algorithm requires significant refinement and further improvement for application to the Pixel barrel region. A deeper understanding is needed in order to evaluate the behaviour of the network on the Pixel barrel region and assess the quality of its performance. Further work would include improvement of Stage 2 of the GNN algorithm in order to improve the TPR and TNR, as well as analysis of the remaining network within the barrel region.
+However the algorithm requires significant refinement and further improvement for application to the pixel barrel region. A deeper understanding is needed in order to evaluate the behaviour of the network on the pixel barrel region and assess the quality of its performance. Further work would include improvement of Stage 2 of the GNN algorithm in order to improve the TPR and TNR, as well as analysis of the remaining network within the barrel region.

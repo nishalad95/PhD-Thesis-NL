@@ -8,16 +8,14 @@
 \chapter{GNN Algorithm Implementation for the TrackML Model}
 \label{chapter-6}
 
-This chapter focuses on the implementation of the GNN pattern recognition algorithm to the publicly available dataset designed for the Kaggle TrackML challenge \cite{kaggle-trackml}. The TrackML detector emulates a full silicon LHC detector and as such, certain models of the GNN algorithm outlined in Chapter \ref{chapter-5}, are improved for the TrackML detector geometry.
-
-This chapter is organised as follows. Section \ref{chapter-6-data-prep} describes the structure of the TrackML data and how it was used to build a graph network. Sections \ref{constructing-track-states} and \ref{chapter-6-covariance-derivation} describe the construction of track state estimates. Section \ref{chapter-6-kl-threshold} presents the classifier constructed to determine the optimal KL threshold used within the GMR stage. Finally, Section \ref{chapter-6-extrapolation-track-extraction} presents alterations to the extrapolation models used within the Information Aggregation stage, as well as the KFs used within the track fitting stage. 
+This chapter focuses on the implementation of the GNN pattern recognition algorithm to the publicly available dataset designed for the Kaggle TrackML challenge \cite{kaggle-trackml}. The TrackML detector emulates a full silicon LHC detector and as such, certain models of the GNN algorithm outlined in Chapter \ref{chapter-5}, are improved for the TrackML detector geometry. Section \ref{chapter-6-data-prep} describes the structure of the TrackML data and how it was used to build a graph network. Sections \ref{constructing-track-states} and \ref{chapter-6-covariance-derivation} describe the construction of track state estimates. Section \ref{chapter-6-kl-threshold} presents the classifier constructed to determine the optimal KL threshold used within the GMR stage. Finally, Section \ref{chapter-6-extrapolation-track-extraction} presents alterations to the extrapolation models used within the Information Aggregation stage, as well as the KFs used within track fitting. 
  
 
 
 \section{Data Preparation}
 \label{chapter-6-data-prep}
 
-The TrackML dataset \cite{kaggle-trackml-data} comprises multiple independent events, where each event contains simulated measurements (3D points) of particles generated in a collision between proton bunches at the LHC. The training dataset contains the recorded hits and the measured $(x, y, z)$ position of each corresponding hit in the global coordinate system. The event truth data contains each hit's ground truth counterpart, their association to particles and the initial parameters of those particles. The radius at a given point on the particle's trajectory, $r$, is computed using the square root of the sum in quadrature of the global $x$ and $y$ measurements.
+The TrackML dataset \cite{kaggle-trackml-data} comprises multiple independent events, where each event contains simulated measurements (3D points) of particles generated in a collision between proton bunches at the LHC. The training dataset contains the recorded hits and the measured position of each corresponding hit in the global Cartesian coordinate system $(x, y, z)$. The event truth data contains each hit's ground truth counterpart, their association to particles and the initial parameters of those particles. The radius at a given point on the particle's trajectory, $r$, is computed using the square root of the sum in quadrature of the global $x$ and $y$ measurements.
 
 In order to read the TrackML data, Python scripts provided by the Kaggle competition organisers are used \cite{python-scripts-kaggle}. The TrackML data provide hit information only, such that graph nodes and edges must be created independently. The hits are converted into graph nodes and edge pairs are constructed using the \textit{FASTrack} algorithm used during the throughput phase of the TrackML Kaggle competition \cite{Amrouche2023}. The FASTrack algorithm is based on a similar hit-pair predictor methodology outlined in Chapter \ref{chapter-4}, whereby hit cluster shapes are used to predict the intervals of track inclination angles and save CPU time by avoiding hit combinations with parameters incompatible with the prediction. Graph edges are predicted and can span up to two layers apart.
 
@@ -38,7 +36,7 @@ Track state estimates, $X_{ij}$, are constructed using a parabolic model for par
 \subsection{Parabolic Track Model}
 \label{parabolic-state}
 
-In the $x$-$y$ plane, charged particles experience the influence of the magnetic field and their trajectories follow a near-circular shape, which can be approximated by a parabola for relatively high $p_{\text{T}}$ ($> 1$ GeV) tracks. As illustrated in Figure \ref{fig:gnn-parabolic-model}, a parabola is formed using the global origin O, node A and neighbour node B. The parabola is transformed into the local coordinate system of node A such that the new $x$-axis, $X_A$, is parallel to O - A and the new $y$-axis, $Y_A$, is the perpendicular. 
+In the $x$-$y$ plane, charged particles experience the influence of the magnetic field and their trajectories follow a near-circular shape, which can be approximated by a parabola for relatively high $p_{\text{T}}$ ($> 1$ GeV) tracks. As illustrated in Figure \ref{fig:gnn-parabolic-model}, a parabola is formed under the assumption that the particle trajectory goes through the global origin O, node A and neighbour node B. The parabola is transformed into the local coordinate system of node A such that the new $x$-axis, $X_A$, is parallel to O - A and the new $y$-axis, $Y_A$, is the perpendicular. 
 
 \begin{figure}[htbp!] 
     \centering
@@ -129,7 +127,7 @@ The joint measurement covariance matrix, $S_{xy}$, for a parabola constructed in
     \label{eqn:trackml-s-matrix-xy}
 \end{equation}
 
-where $\sigma_O$, $\sigma_A$ and $\sigma_B$ are the respective errors due to the measurements at the global origin O, node A and node B, using the parabolic model approximation outlined in Section \ref{parabolic-state}. The measurement uncertainty in the global origin $\sigma_O$ is initialised to 4.0 mm due to the large uncertainty in the beamspot, whereas $\sigma_A$ and $\sigma_B$ are initialised to 0.3mm due to the high precision of the Pixel detector. Hence, the covariance of the vector of parabolic parameters, $p$, is given by $C_{xy}$ in Eq \eqref{eqn:c-xy}
+where $\sigma_O$, $\sigma_A$ and $\sigma_B$ are the respective errors due to the measurements at the global origin O, node A and node B, using the parabolic model approximation outlined in Section \ref{parabolic-state}. The measurement uncertainty in the global origin $\sigma_O$ is initialised to 4.0 mm due to the large uncertainty in the beamspot, whereas $\sigma_A$ and $\sigma_B$ are initialised to 0.3 mm due to the high precision of the pixel detector. The covariance of the vector of parabolic parameters, $p$, is given by $C_{xy}$ in Eq \eqref{eqn:c-xy} using the standard linear algebra approach.
 
 \begin{equation}
     C_{xy} = H^{-1}S_{xy}{H^{-1}}^{T}
@@ -144,7 +142,7 @@ where $\sigma_O$, $\sigma_A$ and $\sigma_B$ are the respective errors due to the
 \subsection{Variance in Inverse Track Inclination}
 \label{variance-in-inverse-track-inclination}
 
-The joint measurement covariance matrix, $S_{rz}$, for node $i$ and neighbour node $j$ in the $r$-$z$ plane is stated in Eq \eqref{eqn:trackml-s-matrix-rz}, where $\{ \sigma_{zi}, \sigma_{zj} \}$ are the measurement errors along the $z$-axis and $\{ \sigma_{ri}, \sigma_{rj} \}$ are the measurement errors in $r$, for the respective $i$ and $j$ nodes. 
+The joint measurement covariance matrix, $S_{rz}$, for node $i$ and neighbour node $j$ in the $r$-$z$ plane is stated in Eq \eqref{eqn:trackml-s-matrix-rz}, where $\{ \sigma_{zi}, \sigma_{zj} \}$ are the measurement errors along the $z$-axis and $\{ \sigma_{ri}, \sigma_{rj} \}$ are the measurement errors in $r$, for the respective nodes $i$ and $j$. 
 
 \begin{equation}
     S_{rz} = \begin{bmatrix} \sigma_{zi}^{2} & 0 & 0 & 0 \\ 
@@ -156,7 +154,7 @@ The joint measurement covariance matrix, $S_{rz}$, for node $i$ and neighbour no
 \end{equation}
 
 
-The magnitude of the uncertainty in the $r$-$z$ plane is dependent on the detector layer where the graph node is situated. For example, for a barrel-located node, the uncertainty in the $z$-axis will be greater than the uncertainty in the $r$-axis due to the orientation of the barrel layer, and vice versa for the endcap. Therefore, for a node located in the Pixel barrel $\sigma_r = 0.4$ mm and $\sigma_z = 0.6$ mm. For a node located in the Pixel endcap $\sigma_r = 0.6$ mm and $\sigma_z = 0.4$ mm.
+The magnitude of the uncertainty in the $r$-$z$ plane is dependent on the detector layer where the graph node is situated. This is a result of the angle of incidence of the particle onto the detector layer, hence the layer's orientation will determine the magnitude of the error. For example, consider a barrel-located node; the uncertainty in the $z$-axis will be greater than the uncertainty in the $r$-axis due to the horizontal orientation of the barrel layer (vice versa for the endcap layer). Therefore, for a node located in the pixel barrel the following errors are used $\sigma_r = 0.4$ mm and $\sigma_z = 0.6$ mm. Conversely, for a node located in the pixel endcap the following errors are used $\sigma_r = 0.6$ mm and $\sigma_z = 0.4$ mm.
 
 The uncertainty in the track inclination $\tau$ is computed using the standard error propagation and linear algebra approach. The transition Jacobian, $G$, relates the measurements in the $r$-$z$ plane to the inverse track inclination $\tau$ and is given by Eq \eqref{trackml-g-rz}.
 
@@ -252,7 +250,7 @@ x/X_0 = 0.02 f(\theta)
 \label{eqn:radiation-length}
 \end{equation}
 
-where 0.02 is the integrated $x/X_0$ for a typical silicon detector layer, which is considered as a single thin scatter. The function $f(\theta)$ is determined by the orientation of the detector layer, on which the node-pair is located. For example, for a scattered node in the Pixel barrel layer $f(\theta) = 1 / \sin(\theta)$, and for a scattered node in the Pixel endcap layer $f(\theta) = 1 / \cos(\theta)$.
+where 0.02 is the integrated $x/X_0$ for a typical silicon detector layer, which is considered as a single thin scatter. The function $f(\theta)$ is determined by the orientation of the detector layer, on which the node-pair is located. For example, for a scattered node in the pixel barrel layer $f(\theta) = [\sin(\theta)]^{-1}$, and for a scattered node in the pixel endcap layer $f(\theta) = [\cos(\theta)]^{-1}$.
 
 
 
@@ -283,7 +281,7 @@ The edge state covariance matrix of the combined track state estimate $X_{ij}$, 
 
 where $C_{xy}^{00}$, $C_{xy}^{01}$, $C_{xy}^{10}$ and $C_{xy}^{11}$ are the corresponding matrix components of the covariance of the vector of parabolic parameters $p$, $C_{xy}$, in the $x$-$y$ plane, stated in Eq \eqref{eqn:c-xy}, and $\sigma_{\tau}^2$ is the variance of the inverse track inclination $\tau$, stated in Eq \eqref{eqn:error-in-tau}. The combined edge state covariance, $C_{ij}$, is therefore represented as a 2 $\times$ 2 block matrix of the $[cov(a, b)]$ extracted from $C_{xy}$, and the variance in $\tau$.
 
-The non-diagonal elements of $C_{ij}$ in the third dimension are zero as there is no correlation in measurements between the $x$-$y$ and $r$-$z$ plane for the Pixel detector.
+The non-diagonal elements of $C_{ij}$ in the third dimension are zero as there is no correlation in measurements between the $x$-$y$ and $r$-$z$ plane for the pixel detector.
 
 Components of $X_{ij}$, that represent the error in track direction must have a contribution from the observed error due to multiple scattering, $\sigma_{ms}$. Therefore, the variance due to multiple scattering, $\sigma_{ms}^2$ must be added to the variance of parameters $b$ and $\tau$, represented by matrix components $C_{ij}^{11}$ and $C_{ij}^{22}$.
 
@@ -312,7 +310,7 @@ A SVM was trained to discriminate between the two classes \cite{scikit-learn}, u
         \includegraphics[width=0.88\linewidth]{images/6-trackml/kl-predictions-2.png}%
         \label{fig:KL-distance-predictions}%
         }%
-    \caption{SVM classifier training and predictions used to determine the optimal Kullback-Leibler threshold distance, $d_{KL}$, between pairwise track states $X_{ij}$, for a given node with a variance of edge orientation $\sigma_e$. The dotted line in b) represents the threshold value of 0.40 when adjusting SVM predictions in order to yield a TPR of 95\%. For a given pair of edge connections with a common node, truth 1 corresponds to all nodes originate from the same truth particle, and truth 0 corresponds to otherwise.}
+    \caption{SVM classifier training and predictions used to determine the optimal Kullback-Leibler threshold distance, $d_{KL}$, between pairwise track states $X_{ij}$, for a given node with a variance of edge orientation $\sigma_e$. The dotted line in b) represents the threshold value of 0.4 when adjusting SVM predictions in order to yield a TPR of 95\%. For a given pair of edge connections with a common node, truth 1 corresponds to all nodes originate from the same truth particle, and truth 0 corresponds to otherwise.}
     \label{fig:KL-distance}
 \end{figure}
 
@@ -327,14 +325,14 @@ A SVM was trained to discriminate between the two classes \cite{scikit-learn}, u
 
 
 
-
+\newpage
 \section{Extrapolation and Track Extraction}
 \label{chapter-6-extrapolation-track-extraction}
 
 \subsection{Overview of KF Implementation}
 \label{chapter-6-overview-of-kf}
 
-State extrapolation and track extraction are handled independently for the $x$-$y$ and $r$-$z$ planes, with each stage using a separate KF. This leads to four individual implementations of the KF. The filter parameters are summarized in Tables \ref{tab:kf-instance-variables-xy} and \ref{tab:kf-instance-variables-rz}, which include the numerical values used to initialize each KF. The derivations of the models used in extrapolation and track extraction, with application of these parameters, are described in Sections \ref{chapter-6-start-of-derivation} - \ref{chapter-6-end-of-derivation}.
+State extrapolation and track extraction are handled independently for the $x$-$y$ and $r$-$z$ planes, with each stage using a separate KF. Consequently, there are four individual implementations of the KF used within this work. The filter parameters are summarized in Tables \ref{tab:kf-instance-variables-xy} and \ref{tab:kf-instance-variables-rz}, including the numerical values used in its initialization. The underlying models used in the extrapolation and track extraction stages are derived in Sections \ref{chapter-6-start-of-derivation} - \ref{chapter-6-end-of-derivation}.
 
 
 
@@ -459,7 +457,8 @@ Measurement Uncertainty
 
 
 
-\begin{table}[!t]
+% \begin{table}[!t]
+\begin{table}[H]
 \caption{Summary of parameters used in the KFs for state extrapolation and track extraction for the $r$-$z$ plane. The numerical values used in the programmatic
 implementation to initialize the KFs are also summarized here. Section \ref{chapter-6-r-z-plane-impl} and \ref{chapter-6-end-of-derivation} provide derivations of the KF models used for the $r$-$z$ plane.}
 
@@ -558,11 +557,13 @@ Process Noise
 
 
 %\newpage
-\clearpage
-\subsection{Parabolic Extrapolation Model for x-y Plane}
+%\clearpage
+\subsection{Parabolic Extrapolation Model}
 \label{chapter-6-start-of-derivation}
 
-A parabolic model for state extrapolation is used for the transverse $x$-$y$ plane. We begin with a parabola connecting the global origin O to node A, in the local coordinate system of node A given by axis $(X_A, Y_A)$, illustrated by Figure \ref{fig:trackml-parabolic-extrapolation-model-xy}.
+
+
+Given the non-uniformity of the magnetic field in the solenoid, the particle trajectory can be modelled as a parabola in the transverse $x$-$y$ plane. In general, assuming a parabolic model where the track goes through the global origin O, the radius and hence the curvature of the track are uniquely defined. As illustrated by Figure \ref{fig:trackml-parabolic-extrapolation-model-xy}, the parabolic model connects the global origin O to node A, in the local coordinate system of node A given by axis $(X_A, Y_A)$.
 
 \begin{figure}[htbp]
     \centering
@@ -580,6 +581,10 @@ x_A(u) = u
 \end{aligned}
 \label{eqn:parabolic-equations-parametric}
 \end{equation}
+
+
+%which has a changing curvature. 
+%A parabolic model for state extrapolation is used for the transverse $x$-$y$ plane. 
 
 The target node for state extrapolation is node C, which has its own local coordinate system given by axis $(X_C, Y_C)$, and is also described by a parabola. In parametric form, the parabola at node C is given by Eqs \eqref{eqn:parabolic-equations-parametric-nodeC}.
 
@@ -603,7 +608,7 @@ y_C = y_s - u\sin(\phi_{AC}) + (au^2 + bu + c)\cos(\phi_{AC})
 
 % the extrapolation ends when this condition is met (target condition
 
-The extrapolation ends when $x_{C}(u) = 0$, as can be seen in Figure \ref{fig:trackml-parabolic-extrapolation-model-xy} when the parabola crosses the $Y_C$ axis. This condition forms a quadratic equation in $u$, where the solution $u^{*} = u(a, b, c)$. Using parametric derivatives, the parabolic parameters $\{a’, b’, c’ \}$ in the coordinate system of the target node, C, can be derived in terms of parabolic parameters $\{a, b, c \}$ in the coordinate system of the starting node A, at the boundary condition $x_{C}(u) = 0$. The Jacobian is then calculated by differentiation of the formulas for $\{a’, b’, c’ \}$ with respect to initial parameters $\{a, b, c \}$, given by Eq \eqref{eqn:transition-jacobian-F-kf-extrapolation-xy}.  
+The extrapolation ends when $x_{C}(u) = 0$, as can be seen in Figure \ref{fig:trackml-parabolic-extrapolation-model-xy} when the parabola crosses the $Y_C$ axis. This condition forms a quadratic equation in $u$, where the solution $u^{*} = u(a, b, c)$. Using parametric derivatives, the parabolic parameters $\{a’, b’, c’ \}$ in the coordinate system of the target node, C, can be derived in terms of parabolic parameters $\{a, b, c \}$ in the coordinate system of the starting node A, at the boundary condition $x_{C}(u) = 0$. The Jacobian, $\hat{F}_{xy}$, is then calculated by differentiation of the formulas for $\{a’, b’, c’ \}$ with respect to initial parameters $\{a, b, c \}$, given by Eq \eqref{eqn:transition-jacobian-F-kf-extrapolation-xy}.  
 
 % quadratic equation in s, where the solution s* is a function of the parabolic parameters local to node A. We then have a function s* as a function of a, b, c
 
@@ -620,7 +625,7 @@ The extrapolation ends when $x_{C}(u) = 0$, as can be seen in Figure \ref{fig:tr
 \end{equation}
 
 
-The extrapolated track state, $\tilde{X}_{xy}$, and extrapolated covariance, $\tilde{C}_{xy}$, are calculated using $F_{xy}$ and Eqs \eqref{eqn:extrapolation}, where the process noise, $Q_{xy}$, is given by Eq \eqref{eqn:process-noise-Q-extrapolation-xy}.
+The extrapolated track state, $\tilde{X}_{xy}$, and extrapolated covariance, $\tilde{C}_{xy}$, are calculated using $\hat{F}_{xy}$ and Eqs \eqref{eqn:extrapolation}, where the process noise, $\hat{Q}_{xy}$, is given by Eq \eqref{eqn:process-noise-Q-extrapolation-xy}.
 
 \begin{equation}
 \hat{Q}_{xy} = \begin{bmatrix} 
@@ -657,7 +662,7 @@ The corresponding Mahalanobis distance, $\Delta \chi^{2}$, is given by Eq \eqref
 \begin{figure}[htbp!] 
     \centering
     \subfloat[]{%
-        \includegraphics[width=0.8\textwidth]{images/6-trackml/mahalanobis-threshold-trackml-xy.png}%
+        \includegraphics[width=0.85\textwidth]{images/6-trackml/mahalanobis-threshold-trackml-xy-2.png}%
         \label{fig:chi2-distance-trackml-xy-1}%
         }%
     \hfill%
@@ -665,7 +670,7 @@ The corresponding Mahalanobis distance, $\Delta \chi^{2}$, is given by Eq \eqref
         \includegraphics[width=0.8\textwidth]{images/6-trackml/mahalanobis-threshold-trackml-xy-cumulative.png}%
         \label{fig:chi2-distance-trackml-xy-2}%
         }%
-    \caption{Mahalanobis distance, $\Delta \chi^{2}$, computed between the projected state and the measurement at each node for the GNN algorithm applied to the TrackML model during state extrapolation in the $x$-$y$ plane. a) Probability distribution for both classes. Truth 1 shows the distribution where the truth particle originating from the extrapolated state and the truth particle originating from the measurement are the same, and truth 0 otherwise. b) Cumulative probability distribution of truth 1 class, where the chosen $\Delta \chi^{2}$ threshold is labelled.}
+    \caption{Mahalanobis distance, $\Delta \chi^{2}$, computed between the projected state and the measurement at each node for the GNN algorithm applied to the TrackML model during state extrapolation in the $x$-$y$ plane. a) Probability distribution for both classes. Truth 1 shows the distribution where the truth particle originating from the extrapolated state and the truth particle originating from the measurement are the same, and truth 0 otherwise. b) Cumulative probability distribution of truth 1 class, where the threshold cut, $d_{\chi}$ = 5.53, was determined in order to provide 95\% efficiency on selecting the truth 1 class.}
     \label{fig:mahalanobis-threshold-trackml-xy}
 \end{figure}
 
@@ -673,6 +678,7 @@ The corresponding Mahalanobis distance, $\Delta \chi^{2}$, is given by Eq \eqref
 
 A threshold cut, $d_{\chi}$ = 5.53, was determined using the cumulative distribution function shown in Figure \ref{fig:chi2-distance-trackml-xy-2}, in order to provide 95\% efficiency on selecting the truth 1 class. Therefore, if $\Delta \chi^{2} < d_{\chi}$, then $\tilde{X}$ is fully extrapolated to its neighbour node using the KF update. The KF for state extrapolation is initialised with the Jacobian in Eq \eqref{eqn:transition-jacobian-F-kf-extrapolation-xy} and process noise in Eq \eqref{eqn:process-noise-Q-extrapolation-xy}.
 
+One can assume a uniform magnetic field during the extrapolation of track states in the $x$-$y$ plane across between adjacent layers, such that the particle trajectory remains as a parabola. However, this assumption cannot be made during the track fitting stage (see Section \ref{chapter-6-derivation-part-2} for further information). 
 
 
 
@@ -682,13 +688,27 @@ A threshold cut, $d_{\chi}$ = 5.53, was determined using the cumulative distribu
 
 
 \clearpage
-\subsection{KF Setup for Track Extraction in x-y Plane}
+\subsection{Kalman Filter Track Extraction in Transverse Plane}
 \label{chapter-6-derivation-part-2}
 %The KF track fit is applied simultaneously in both the $x$-$y$ and $r$-$z$ planes, in order to assess the quality of the fit using both models. In comparison to the KF used for state extrapolation (Section \ref{kf-for-extrp-chapter-6}), the KF for track fitting considers the entire chain of track segments making up a track candidate. Therefore, there will be a non-zero process noise, $Q$, present in both $x$-$y$ and $r$-$z$ planes.
 
-The KF works in a rotated coordinate system, whereby the first track segment in the chain of segments representing a track candidate is rotated to be parallel to the global $x$-axis. This rotated coordinate system is denoted by $(x', y')$, not to be confused with the global coordinate system $(x, y)$. The new $x$-axis, $x'$, is parallel to the first track segment and the new $y$-axis, $y'$, describes the track deviation from the straight line.
+\subsubsection{Rotated Coordinate System}
 
-The KF in the $(x', y')$ plane must take into account the influence of the magnetic field. As the track bends in a particular direction, dependent on the charge of the particle, the magnetic field creates a systematic effect on the track direction and hence a near-constant drift in the azimuthal angle from the $x$-axis, $\phi$. Statistically, such a situation can be described as a correlated noise which affects the track direction and can be modelled by the Ornstein-Uhlenbeck (OU) process \cite{OU}. Using the OU process, the track direction evolves stochastically according to a deterministic drift parameter, $\alpha$, and stochastic noise, $\sigma_{ou}$. The result is one which can be substituted into the KF as a sophisticated process noise, making the KF track fit three-dimensional.
+The KF works in a rotated coordinate system, whereby the first track segment in the chain of segments representing a track candidate is rotated to be parallel to the global $x$-axis. This decision is made to avoid singularities from occurring in calculations of gradients, for near vertical tracks. The rotated coordinate system is denoted by $(x', y')$, not to be confused with the global coordinate system $(x, y)$. The new $x$-axis, $x'$, is parallel to the first track segment and the new $y$-axis, $y'$, describes the track deviation from the straight line.
+
+\subsubsection{Motivation for OU Process Model}
+
+As opposed to the parabolic model used in Section \ref{chapter-6-start-of-derivation}, whereby the magnetic field was assumed to be uniform across the extrapolation distance between two connected nodes, one cannot make the same assumption during the track fitting and extraction stage. In this instance, one must consider the influence of the magnetic field, as the region of interest is now much greater in comparison as one considers the entire chain of track segments spanning multiple detector layers. The effect of the magnetic field is not negligible and is an important factor.
+
+As the track bends in a particular direction, dependent on the charge of the particle, the magnetic field creates a systematic effect on the track direction and hence a near-constant drift in the azimuthal angle from the $x$-axis, $\phi$. Statistically, such a situation can be described as a correlated noise which affects the track direction. .... The problem can be modelled as a random walk, there is a systematic effect with a degree of randomnesss or like a random walk. Consider Browniaan motion .... In financial mathematics, stochastic differential equations such as the OU and Wiener processes, are typically used to model the evolution of financial interest rates of stocks, with a degree of volatility. Here the OU can be used as ....
+
+
+...also considering the computational complexity of the KF when incorporating many different parameters in its model. Rather it was investigated if a simpler approach could be taken. The linear model is robust with low levels of curvature. Link to OU, computational complexity of the KF is still low only requiring one additional parameter - and hence 3d KF is made.... this can be modelled using the linear model with OU noise.
+
+and can be modelled by the Ornstein-Uhlenbeck (OU) process \cite{OU}. Using the OU process, the track direction evolves stochastically according to a deterministic drift parameter, $\alpha$, and stochastic noise, $\sigma_{ou}$. The result is one which can be substituted into the KF as a sophisticated process noise, making the KF track fit three-dimensional. This method is advantageous as it is a simpler approach that leverages the linear model with an addition of a stochastic element.
+
+
+\subsubsection{Filter Implementation}
 
 For a set of $n$ nodes representing a track candidate, the sequential set of measurements are $\{m'_{(n-1)}, ..., m'_1, m'_0, \}$, where $m'_{(n-1)}$ is the measurement of the node with the largest radius, as the track extraction works from the outermost node. The KF is initialised with the following three-dimensional filter state estimate, $\hat{x}_{xy}$, given by Eq \eqref{eqn:kf-track-fit-initialised-state-xy}.
 
@@ -787,11 +807,11 @@ The process noise, $\hat{Q}_{xy}$, is implemented with the addition of a non-zer
 
 
 \clearpage
-\subsection{Linear Extrapolation Model for r-z Plane}
+\subsection{Linear Extrapolation Model}
 \label{chapter-6-r-z-plane-impl}
 
 
-Similar to Section \ref{gnn-application-toy-model}, a linear model is used for track state extrapolation in the $r$-$z$ plane. Each connection is modelled as a straight line, where the state to extrapolate, $x_{rz}$, from node $i$ to neighbour node $j$ consists of the $z$-position at node $i$, $m_i$, and the track inclination to node $j$, $\tau_{ij}$, extracted from the combined track state estimate, $X_{ij}$, described at node $i$. The state to extrapolate, $x_{rz}$, is given by Eq \eqref{eqn:track-state-estimate-rz}.
+Similar to Section \ref{gnn-application-toy-model}, a linear model is used for track state extrapolation in the $r$-$z$ plane, as the particle trajectory follows a near linear path. Each connection is modelled as a straight line, where the state to extrapolate, $x_{rz}$, from node $i$ to neighbour node $j$ consists of the $z$-position at node $i$, $m_i$, and the track inclination to node $j$, $\tau_{ij}$, extracted from the combined track state estimate, $X_{ij}$, described at node $i$. The state to extrapolate, $x_{rz}$, is given by Eq \eqref{eqn:track-state-estimate-rz}.
 
 \begin{equation}
 x_{rz} = \begin{bmatrix} m_i \\ \tau_{ij} \end{bmatrix}
@@ -799,14 +819,14 @@ x_{rz} = \begin{bmatrix} m_i \\ \tau_{ij} \end{bmatrix}
 \end{equation}
 
 
-The state covariance matrix, $P_{rz}$, is stated in Eq. \eqref{eqn:kf-track-fit-initialised-cov-rz}.  
+The corresponding state covariance matrix, $P_{rz}$, is stated in Eq. \eqref{eqn:kf-track-fit-initialised-cov-rz}.  
 
 \begin{equation}
 P_{rz} = \begin{bmatrix} \sigma_{rz}^2 & 0 \\ 0 & \sigma_{\tau_{rz}}^2 + \sigma_{ms}^2 \end{bmatrix} 
 \label{eqn:kf-track-fit-initialised-cov-rz}
 \end{equation}
 
-The magnitude of the uncertainty in the measurement of the $r$-$z$ plane, $\sigma_{rz}$, is dependent on the detector layer where the graph node is situated. For example, for an endcap-located node, the uncertainty in the measurement will be greater than for a barrel-located node, due to the orientation of the detector layer. Therefore, for a node located in the Pixel barrel $\sigma_{rz} = 0.4$mm and for a node located in the Pixel endcap $\sigma_{rz} = 0.6$mm. The derivation of the uncertainty in track inclination, $\sigma_{\tau_{rz}}$, is described in Section \ref{variance-in-inverse-track-inclination}. 
+The magnitude of the uncertainty in the measurement of the $r$-$z$ plane, $\sigma_{rz}$, is dependent on the detector layer where the graph node is situated. For example, for an endcap-located node, the uncertainty in the measurement will be greater than for a barrel-located node, due to the orientation of the detector layer. Therefore, for a node located in the pixel barrel $\sigma_{rz} = 0.4$ mm and for a node located in the pixel endcap $\sigma_{rz} = 0.6$ mm. The derivation of the uncertainty in track inclination, $\sigma_{\tau_{rz}}$, is described in Section \ref{variance-in-inverse-track-inclination}. 
 
 Similar to the procedure described in Section \ref{gnn-application-toy-model}, the state, $x_{rz}$, is projected into the subspace of measurements in the $r$-$z$ plane, where the residual and corresponding Mahalanobis distance, $\Delta \chi_{ij}^{2}$, between the projection and the measurement at each node is calculated. Similar to Section \ref{chapter-6-start-of-derivation}, a threshold distance is determined by using the truth distributions of $\Delta \chi_{ij}^{2}$ in order to provide 95\% efficiency in selection of the truth class 1. 
 
@@ -830,7 +850,7 @@ where $dr$ is the difference in radial position of nodes $i$ and $j$, $dr = r_i 
 
 
 
-\subsection{KF Setup for Track Extraction in r-z Plane}
+\subsection{Kalman Filter Track Extraction in r-z Plane}
 \label{chapter-6-end-of-derivation}
 % linear KF model, with non-zero process noise Q, following multiple scattering only
 
