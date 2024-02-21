@@ -7,12 +7,28 @@
 %-------------------------------------------
 %	Chapter 2: LHC and ATLAS
 %-------------------------------------------
-\chapter{The Large Hadron Collider and ATLAS Detector}
+\chapter{Theoretical and Experimental Framework}
 \label{chapter-2}
 
 Since the completion of its construction in 2008, the \ac{LHC} \cite{Evans:2008zzb} at CERN has extended the frontiers of particle physics through its unprecedented energy and luminosity. Located on the Swiss-French border, the \ac{LHC} is the world’s largest particle accelerator. It is designed to accelerate protons around a 27 km ring until they are travelling just 3 ms$^{-1}$ slower than the speed of light, at which point they are made to collide. The protons travel round the ring 11,000 times per second in two concentric beams, which are guided by superconducting magnets, cooled using liquid helium to \num{-271.3} \si{\degree}C (1.9 K). The beams are made to cross at four locations so that collisions between protons can take place. Around these collision points four specialised detectors, ALICE \cite{AliceCollaboration_2008}, CMS \cite{CMS-TDR-08-001}, LHCb \cite{LHCbCollaboration_2008} and ATLAS \cite{PERF-2007-01}, are located to capture information.
 
-In this chapter, a brief overview of the \ac{LHC} and the accelerator complex at CERN is given in Section \ref{the-lhc}. The ATLAS experiment and an overview of the different detector systems is provided in Section \ref{atlas-section}. Finally, the future of the \ac{LHC} program is presented in Section \ref{hi-lumi}, with a focus on the motivation and challenges that the  \ac{HL-LHC} phase will bring.
+\textbf{EDIT THIS} In this chapter, an introduction to the theoretical framework, including the Standard Model of particle physics, is given in Section \ref{theo-framework}. A brief overview of the \ac{LHC} is provided in Section \ref{the-lhc}. The ATLAS experiment and its different detector systems is given in Section \ref{atlas-section}. Finally, the future of the \ac{LHC} program is presented in Section \ref{hi-lumi}, with a focus on the motivation and challenges that the  \ac{HL-LHC} phase will bring.
+
+\section{Theoretical Framework}
+\label{theo-framework}
+The section is included for a more complete picture of the LHC and ATLAS, by sketching the physics searches for which it has been designed to perform. A full survey of the presented topics is not intended and the reader is encouraged to search among the large amount of available literature for more details.
+
+
+\subsection{The Standard Model}
+The Standard Model (SM) of elementary particle physics is the theory describing all known elementary particles and their interactions via three of the four fundamental forces. Developed by merging the successful theories of quantum mechanics and relativity in the second half of the 20th century, the SM’s position today at the centre of our understanding of the nature of the Universe is firmly established by an unparalleled level of agreement between the model’s predictions and experimental results [REF]. The SM comprises the unified theory of the strong, the weak and the electromagnetic fundamental forces, as well as the fundamental particles that make up all matter .....[reference and table]. However, the Standard Model does not describe gravity and is therefore not a complete theory of the fundamental interactions.
+
+
+
+\subsection{The Higgs Sector}
+\subsection{The Future of Particle Physics}
+Maybe move this section to the end near HL-LHC motivation?
+The current state of the field, the HL-LHC phase and open questions
+
 
 
 \section{The Large Hadron Collider}
@@ -83,6 +99,8 @@ More comprehensive descriptions of the calorimeters and muon spectrometer can be
 
 %% based on https://twiki.cern.ch/twiki/bin/view/AtlasProtected/PubComCommonText
 
+\subsubsection{The ATLAS Coordinate System}
+
 The origin of the coordinate system used by ATLAS is the nominal interaction point in the centre of the detector. As shown in Figure \ref{fig:atlas-coord-system}, the z-axis points along the direction of the beam pipe, while the x-axis points from the interaction point to the centre of the \ac{LHC} ring, and the y-axis points upwards.
 The transverse plane lies in $x$-$y$ while the longitudinal direction lies along the z-axis. A cylindrical coordinate system with coordinates ($r$,$\phi$) is used in the transverse plane, where $r$ is the radius from the origin and $\phi$ is the azimuthal angle around the z-axis.
 
@@ -95,17 +113,7 @@ The transverse plane lies in $x$-$y$ while the longitudinal direction lies along
   \label{fig:atlas-coord-system}
 \end{figure}
 
-%The pseudorapidity is defined in terms of the polar angle $\theta$ as $\eta = -\ln \tan(\theta/2)$.
-
-The polar angle $\theta$ is commonly specified in terms of the pseudorapidity $\eta$, and is defined as
-%
-\begin{equation}\label{eq:pseudorap}
-  \eta = - \ln \left[ \tan \left( \frac{\theta}{2} \right) \right] .
-\end{equation}
-%
-The pseudorapidity is a convenient quantity to work with as differences in $\eta$ are invariant under Lorentz boosts. In addition, particle production is constant as a function of $\eta$.
-
-Additionally, the transverse plane is often used to describe the kinematics of collisions, where the transverse momentum $p_{\text{T}}$ of an object is the projection of its momentum on the transverse plane.
+Additionally, the transverse $x$-$y$ plane is often used to describe the kinematics of collisions, where the transverse momentum $p_{\text{T}}$ of an object is the projection of its momentum on the transverse plane, given by Eq \ref{eq:pt}.
 
 %
 \begin{equation}\label{eq:pt}
@@ -113,10 +121,19 @@ Additionally, the transverse plane is often used to describe the kinematics of c
 \end{equation}
 
 
-\subsubsection{Luminosity}
 
-\subsubsection{Pile-up}
+%The pseudorapidity is defined in terms of the polar angle $\theta$ as $\eta = -\ln \tan(\theta/2)$.
 
+
+\subsubsection{Pseudorapidity}
+
+The pseudorapidity, $\eta$, is a commonly used spatial coordinate describing the polar angle, $\theta$, of a particle's trajectory relative to the beam axis, and is defined as:
+%
+\begin{equation}\label{eq:pseudorap}
+  \eta = - \ln \left[ \tan \left( \frac{\theta}{2} \right) \right] .
+\end{equation}
+%
+The pseudorapidity is a convenient quantity to work with as differences in $\eta$ are invariant under Lorentz boosts. In addition, particle production is constant as a function of $\eta$.
 
 
 %-------------------------------------------
@@ -152,12 +169,12 @@ The innermost silicon pixel detector \cite{pixel} provides high-granularity meas
 
 \subsubsection{Semi-Conductor Tracker (SCT)}
 
-The pixel detector is followed by the SCT, which is made up of four concentric barrel layers in the central region, and nine disks in each end-cap. Each layer is itself made of a pair of silicon microstrip layers, with a small stereo angle (20 mrad) between the two layers enabling the z-coordinate to be measured from a pair of strip measurements. The SCT typically provides a further four space-point measurements (eight strip measurements, or hits) per track in the barrel region.
+The pixel detector is followed by the SCT, which is made up of four concentric barrel layers in the central region, and nine disks in each end-cap. Each layer is itself made of a pair of silicon microstrip layers, with a small stereo angle (40 mrad) between the two layers enabling the $z$-coordinate to be measured from a pair of strip measurements. The operation of the silicon sensors is based on the properties of the p-n junction \cite{6773080}. At the junction between the p-type doped silicon and the n-type doped silicon the electrons (holes) diffuse from the n-type (p-type) side and recombine with holes (electrons) on the p-type (n-type) side. The diffusion of the electrons (holes) leaves behind ionised donor (acceptor) atoms and an electric field develops across the junction which inhibits further diffusion until equilibrium is reached. The space charge region formed around the junction is now devoid of mobile charge carriers and is referred to as the depletion region. Applying an external reverse bias voltage to the p-n junction draws electrons (holes) away from the n-type (p-type) side and increases both the depletion region width and the electric field across the junction. Ionising particles traversing the sensor create electron-hole pairs in the depletion region, which are swept to the electrodes by the electric field and induce an electrical current in the external circuitry. In silicon microstrip sensors, like those in the SCT, one (or both) of the electrodes are segmented in order to provide position measurements. The SCT typically provides a further four space-point measurements (eight strip measurements, or hits) per track in the barrel region. See Ref. \cite{inner-detector-TDR} for further information.
 
 
 \subsubsection{Transition Radiation Tracker (TRT)}
 
-The TRT is a straw-tube tracker which complements the higher-resolution silicon- based tracks by offering a larger number of hits per track and a long lever arm, which aids the accurate measurement of particle momentum and enables radially extended track reconstruction up to $ \lvert \eta \rvert = 2.0$. It is made up of approximately 300,000 drift tubes with a diameter of 4 mm which are filled with an argon/xenon gas mixture. The walls of each tube are electrically charged, and a thin conducting wire runs along the center. When a charged particle traverses a tube, it ionises the gas and the resulting liberated electrons drift along the electric field to the wire, where an associated charge is registered. In the barrel the straws run parallel to the z-axis and therefore the TRT only provides tracking information in $R\phi$. Straws are arranged radially in the end-caps. The resulting two-dimensional space-points have a resolution of approximately 120 $\mu$m. The spaces between the straws are filled with a polymer which encourages the emission of transition radiation, aiding electron identification.
+The TRT is a straw-tube tracker which complements the higher-resolution silicon- based tracks by offering a larger number of hits per track and a long lever arm. This aids the accurate measurement of particle momentum and enables radially extended track reconstruction up to $ \lvert \eta \rvert = 2.0$. It is made up of approximately 300,000 drift tubes with a diameter of 4 mm which are filled with an argon/xenon gas mixture. The walls of each tube are electrically charged, and a thin conducting wire runs along the center. When a charged particle traverses a tube, it ionises the gas and the resulting liberated electrons drift along the electric field to the wire, where an associated charge is registered. In the barrel the straws run parallel to the z-axis and therefore the TRT only provides tracking information in $(r, \phi)$. Straws are arranged radially in the end-caps. The resulting two-dimensional space-points have a resolution of approximately 120 $\mu$m. The spaces between the straws are filled with a polymer which encourages the emission of transition radiation, aiding electron identification.
 
 \subsubsection{The Inner Tracker (ITk) Upgrade}
 
