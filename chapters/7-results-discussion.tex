@@ -233,7 +233,7 @@ An alternative procedure to the “walkthrough” algorithm used in Exa.TrkX’s
 
 
 
-\section{Extension to the Pixel Barrel Region}
+\section{Extension to the Pixel Barrel}
 \label{chapter-7-outlook}
 
 
@@ -321,10 +321,10 @@ For Stage 2, the TPR for identification of correct outlier edges, and hence the 
 
 
 
+\section{Discussion}
+\subsection{Limitations}
 
-
-\section{Refinements and Other Approaches}
-
+\subsection{Refinements and Improvements}
 \subsection{Extrapolation in r-z Plane}
 
 With reference to Eq \ref{eqn:kf-track-fit-initialised-state-rz} a track state in the $r$-$z$ plane is defined as a track position at some reference surface (in general constant radius $r$ or constant $z$ position) and the inverse track inclination angle. Due to the orientation of the detector layers, the extrapolation can result in a change of reference surface type. One such example is an extrapolation from the pixel barrel layer at constant $r$ to pixel endcap layer at constant $z$, as illustrated in Figure \ref{fig:improvement-extrapolation}. Naturally, there are four possible cases for extrapolation; barrel-to-barrel, barrel-to-endcap, endcap-to-barrel and endcap-to-endcap, and each case should be considered individually.
@@ -358,7 +358,7 @@ Exploring this general case of extrapolation in the $r$-$z$ plane is one such en
 
 
 
-
+\section{Further Avenues of Investigation}
 
 
 \subsection{Software Optimisations}
@@ -399,6 +399,7 @@ If a subgraph does not meet the criteria to qualify as a good track candidate ou
 Figure \ref{fig:community-detection-1} shows a small subset of nodes from a TrackML event and its corresponding edges connected as one subgraph. The general shape of the network gives an indication that the tracks originate from the left-hand side, where the trajectories move towards the right-hand side. The results of application of Community Detection are shown in Figure \ref{fig:community-detection-2}. In this instance, the Community Detection was successful to partition the network into a total of seven subgraphs shown by separate colours. Six of these subgraphs met the criteria for a good track candidate, and a single track fragment was also formed shown by the grey subgraph containing two nodes. However upon further investigation, this procedure did not work successfully in all cases, specifically in dense environments, and the algorithm was found to not utilize node properties during network partition. Therefore, as this procedure needed further refinement, it was not implemented into the main GNN pattern recognition algorithm. 
 
 A technique such as Community Detection is advantageous for a problem such as track splitting, as it provides fast convergence in track extraction, given that the algorithm is adapted for highly dense environments.
+
 
 
 
