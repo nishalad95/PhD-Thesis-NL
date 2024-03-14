@@ -8,21 +8,38 @@
 \chapter{GNN Algorithm Implementation for the TrackML Model}
 \label{chapter-6}
 
-This chapter focuses on the implementation of the GNN pattern recognition algorithm to the publicly available dataset designed for the Kaggle TrackML challenge \cite{kaggle-trackml}. The TrackML detector emulates a full silicon LHC detector and as such, certain models of the GNN algorithm outlined in Chapter \ref{chapter-5}, are improved for the TrackML detector geometry. Section \ref{chapter-6-data-prep} describes the structure of the TrackML data and how it was used to build a graph network. Sections \ref{constructing-track-states} and \ref{chapter-6-covariance-derivation} describe the construction of track state estimates. Section \ref{chapter-6-kl-threshold} presents the classifier constructed to determine the optimal KL threshold used within the GMR stage. Finally, Section \ref{chapter-6-extrapolation-track-extraction} presents alterations to the extrapolation models used within the Information Aggregation stage, as well as the KFs used within track fitting. 
+This chapter focuses on the implementation of the GNN pattern recognition algorithm to the publicly available dataset designed for the Kaggle TrackML challenge \cite{kaggle-trackml}. The TrackML detector emulates a full silicon LHC detector and as such, certain models of the GNN algorithm outlined in Chapter \ref{chapter-5}, are improved for the TrackML detector geometry. Section \ref{chapter-6-data-prep} describes the structure of the TrackML data and how it was used to build a graph network. Section \ref{chp6-model-assumptions} describes the model assumptions and the main alterations made to the simple toy model presented in Chapter \ref{chapter-5}. Sections \ref{constructing-track-states} and \ref{chapter-6-covariance-derivation} describe the construction of track state estimates. Section \ref{chapter-6-kl-threshold} presents the classifier constructed to determine the optimal KL threshold used within the GMR stage. Finally, Section \ref{chapter-6-extrapolation-track-extraction} presents alterations to the extrapolation models used within the Information Aggregation stage, as well as the KFs used within track fitting. 
  
 
 
 \section{Data Preparation}
 \label{chapter-6-data-prep}
 
-The TrackML dataset \cite{kaggle-trackml-data} comprises multiple independent events, where each event contains simulated measurements (3D points) of particles generated in a collision between proton bunches at the LHC. The training dataset contains the recorded hits and the measured position of each corresponding hit in the global Cartesian coordinate system $(x, y, z)$. The event truth data contains each hit's ground truth counterpart, their association to particles and the initial parameters of those particles. The radius at a given point on the particle's trajectory, $r$, is computed using the square root of the sum in quadrature of the global $x$ and $y$ measurements.
+The TrackML dataset \cite{kaggle-trackml-data} comprises multiple independent events, where each event contains simulated measurements (3D points) of particles generated in a collision between proton bunches at the LHC. The training dataset contains the recorded hits and the measured position of each corresponding hit in the global Cartesian coordinate system $(x, y, z)$. The event truth data contains each hit's ground truth counterpart, their association to particles and the initial parameters of those particles. The radius at a given point on a track, $r$, is computed using the square root of the sum in quadrature of the global $x$ and $y$ measurements.
 
 In order to read the TrackML data, Python scripts provided by the Kaggle competition organisers are used \cite{python-scripts-kaggle}. The TrackML data provide hit information only, such that graph nodes and edges must be created independently. The hits are converted into graph nodes and edge pairs are constructed using the \textit{FASTrack} algorithm used during the throughput phase of the TrackML Kaggle competition \cite{Amrouche2023}. The FASTrack algorithm is based on a similar hit-pair predictor methodology outlined in Chapter \ref{chapter-4}, whereby hit cluster shapes are used to predict the intervals of track inclination angles and save CPU time by avoiding hit combinations with parameters incompatible with the prediction. Graph edges are predicted and can span up to two layers apart.
 
-Due to the sheer volume of data generated during high-energy proton-proton collisions, it is impossible for any Trigger system to reconstruct all objects. There are many low momentum tracks that will produce hits and will begin to curve under the influence of the magnetic field. These types of tracks are not of interest for reconstruction within this study. As a result, there are certain kinematic requirements imposed. Constraints are embedded on the graph edge parameters, in order to select the tracks of interest with a particular $p_{\text{T}}$ from the very beginning \cite{Dmitry-fasttrack-addtest}, and construct the graph network. 
+Due to the sheer volume of data generated during high-energy proton-proton collisions, it is impossible for any Trigger system to reconstruct all objects. There are many low momentum tracks that will produce hits and will begin to curve under the influence of the magnetic field. These types of tracks are not of interest for reconstruction within this study. As a result, there are certain kinematic requirements imposed. Constraints are embedded on the graph edge parameters, in order to select the tracks of interest with a particular $p_{\text{T}}$ from the very beginning \cite{Dmitry-fasttrack-addtest}. 
 
 % min_Curvature - want to select a particular pT range of the tracks we want to look at
 % repo - "fasttrack" add-test branch
+
+
+\section{Model Assumptions and Key Components}
+\label{chp6-model-assumptions}
+
+This Section presents the main assumptions of the GNN-based algorithm applied to the TrackML detector model. These points are further elaborated in Sections \ref{constructing-track-states} - \ref{chapter-6-extrapolation-track-extraction} and are stated here for ease of reference. The assumptions stated in Section \ref{chp5-model-assumptions} remain valid in this application, unless explicitly altered below, such that the necessary changes for the TrackML detector have been incorporated.
+
+
+\begin{itemize}
+    \item The transverse and longitudinal projections of the particle trajectories can be handled independently, as a result the GNN-based algorithm handles track parameters in both the $x$-$y$ and $r$-$z$ planes. 
+    \item In the $x$-$y$ plane the model assumes parabolic track motion, and the trajectory is assumed to travel through the global origin. In the $r$-$z$ plane the model assumes linear track motion.
+    \item The main source of uncertainty in the track position originates from the measurement error, uncertainty in track direction originates from the error due to multiple scattering, and the uncertainty in track curvature originates from modelling the influence of the magnetic field.
+    \item The effect of multiple scattering is modelled dynamically and is computed based on detector layer orientation.
+    \item In the transverse plane, during the extrapolation stage the model assumes a uniform magnetic field as the extrapolation distance is relatively small between detector layers.
+    \item In the transverse plane, during track fitting the magnetic field is assumed to be non-homogeneous and hence the trajectory is not a perfect parabola. In this case, the trajectory is modelled as linear motion with an additional Ornstein-Uhlenbeck process noise \cite{OU}.
+
+\end{itemize}
 
 
 \section{Construction of Track State Estimates}

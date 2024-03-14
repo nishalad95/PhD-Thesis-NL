@@ -29,6 +29,26 @@ Unlike traditional methodologies whereby MLPs are employed for deep learning str
 The excitation and inhibition rules of individual edge connections are designed to facilitate the “simple-to-complex” approach for “hits-to-tracks” association, such that the network starts with low hit density regions of an event and gradually progresses towards more complex areas. As the network evolves, the uncertainty in local track parameters decreases until there are no more track candidates that fulfil the criteria for a good track. This is the end state of the network where isolated nodes, track fragments and unresolved ambiguities will remain.
 
 
+\subsection{Model Assumptions and Key Components}
+\label{chp5-model-assumptions}
+
+The following is a summary of the main assumptions and important aspects used within the construction of GNN model. These points are further elaborated in Sections \ref{gnn-network-initialization} - \ref{gnn-application-toy-model} and are stated here for ease of reference.
+
+
+\begin{itemize}
+    \item Each node in the graph network represents an individual hit or clusters of closely located hits. Each edge models the relationship between the connected node-pairs in the form of a Gaussian state vector, this models the partial estimate of track parameters between a particular node-pair. 
+    \item The model assumes each node represents a single truth track with a set of noisy connections. Intersecting tracks are not modelled; this would be an extension of this work.
+    \item The main sources of uncertainty in track state vectors arise from the measurement error and error due to multiple scattering, assumed to be uniform.
+    \item Track detection inefficiencies are random and cannot be learned, so edge connections are allowed up to two detector layers apart to compensate for cases when a track is not detected in the intermediate layer. As a result, clustering of track state vectors can occur across layers.
+    \item Exchange of state information between nodes (message passing) occurs bidirectionally along \textit{active} edge connections only. 
+    \item The model evaluates the compatibility of state information exchanged between nodes using the Mahalanobis distance as the statistical covariance between the two states can be incorporated.
+    \item Edge weights are associated to each track state and are model parameters, unlike traditional neural network weights which are learned within training.
+    \item Edge weights are updated using their priors and Gaussian likelihoods. They are also normalised by the number of layers either side of the central node, assuming the track has one hit per layer.
+    \item The model assumes linear track motion in the state extrapolation, track fitting and extraction stages.
+
+\end{itemize}
+
+
 
 \section{Graph Network Initialization}
 \label{gnn-network-initialization}
@@ -45,7 +65,7 @@ g_i(X) = \sum_{j} w_{ij}\Phi_{ij}(X, X_{ij}, C_{ij})
 \label{eqn:gaussian-mixture}
 \end{equation}
 
-where $C_{ij}$ are track state covariances. All edges act as bidirectional conduits, such that message passing can occur in both directions. All edges are initialised as \textit{active}, allowing the propagation of state information between its node-pair, whereas \textit{deactivated} or \textit{non-active} edges do not allow state information to be propagated. 
+where $C_{ij}$ are track state covariances. All edges act as bidirectional conduits, such that message passing can occur in both directions. All edges are initialised as \textit{active}, allowing the propagation of state information between its node-pair, whereas \textit{deactivated} edges do not allow state information to be exchanged. 
 
 %Figure \ref{fig:network-initial} illustrates a node and its neighbourhood.
 
@@ -198,7 +218,7 @@ In order to assess the quality of the track fit the p-value is computed from the
 
 A linear 2-dimensional MC model was used to simulate seven truth tracks in the $x$-$y$ plane, each with ten hits as shown in Figure \ref{fig:ground-truth}. 
 
-\begin{figure}[htbp]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=0.78\textwidth]{images/5-gnn-algorithm/ground-truth.png}
     \caption{Simulation of seven truth tracks.}
@@ -344,7 +364,7 @@ Within this simple example, the GNN-based algorithm was not continued beyond sta
 \end{figure}
 %\end{center}
 
-
+\newpage
 \section{Conclusion}
 
 The proposed GNN algorithm is successful in iteratively identifying outlier edge connections and extracting track candidates for simple simulated particle collision events. GMR via clustering of state vectors proves to be a successful first step towards resolving incompatible connections in the network. The KF works well for both the extrapolation of state vectors to neighbour nodes, as well as for track extraction and track fitting. This ensures neighbourhood information can be aggregated in order to improve the precision in track state parameters. An intrinsic characteristic of the GNN algorithm is that neighbourhood complexity is inferred by the network. This is observed as the GNN algorithm automatically initiates the pattern recognition process in regions where outlier connections are easily identifiable. The network starts with low density regions and gradually progresses towards high density areas. This indicates that the GNN algorithm behaves as expected, first resolving ambiguities in ``cold'' regions and shows great promise for extraction of track candidates in more complex cases and realistic detector setups.
