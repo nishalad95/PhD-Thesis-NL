@@ -324,7 +324,9 @@ For Stage 2, the TPR for identification of correct outlier edges, and hence the 
 \section{Discussion}
 \subsection{Limitations}
 
-\subsection{Refinements and Improvements}
+%\subsection{Refinements and Improvements}
+
+\section{Further Avenues of Investigation}
 \subsection{Extrapolation in r-z Plane}
 
 With reference to Eq \ref{eqn:kf-track-fit-initialised-state-rz} a track state in the $r$-$z$ plane is defined as a track position at some reference surface (in general constant radius $r$ or constant $z$ position) and the inverse track inclination angle. Due to the orientation of the detector layers, the extrapolation can result in a change of reference surface type. One such example is an extrapolation from the pixel barrel layer at constant $r$ to pixel endcap layer at constant $z$, as illustrated in Figure \ref{fig:improvement-extrapolation}. Naturally, there are four possible cases for extrapolation; barrel-to-barrel, barrel-to-endcap, endcap-to-barrel and endcap-to-endcap, and each case should be considered individually.
@@ -356,9 +358,6 @@ The initial track state is at node A with its $z$-position and some estimate of 
 Exploring this general case of extrapolation in the $r$-$z$ plane is one such enhancement for the implementation of the KF and may provide an improvement in the precision of track state estimates.
 
 
-
-
-\section{Further Avenues of Investigation}
 
 
 \subsection{Software Optimisations}
