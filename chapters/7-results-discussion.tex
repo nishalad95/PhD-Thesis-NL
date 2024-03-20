@@ -321,9 +321,9 @@ For Stage 2, the TPR for identification of correct outlier edges, and hence the 
 
 
 
-\section{Discussion}
-\subsection{Limitations}
+%\section{Discussion}
 
+%\subsection{Limitations}
 %\subsection{Refinements and Improvements}
 
 \section{Further Avenues of Investigation}
@@ -406,8 +406,15 @@ A technique such as Community Detection is advantageous for a problem such as tr
 
 \section{Conclusion}
 
-It is promising to see that the GNN algorithm works on simulated particle collision events produced by the TrackML detector, which have significant track multiplicity. The proposed GNN algorithm is successful in identifying outlier edge connections in an iterative manner, as well as successful in extracting track candidates for the endcap regions. It is an encouraging result that this methodology provides a high performance for fully contained tracks within the endcap volume, achieving 93.3\% average track reconstruction efficiency for tracks with $p_{\text{T}} >$ 1 GeV averaged over 50 simulated TrackML events. The average track purity and average particle purity achieved were 99.0\% for both quantities. Overall, the application to the endcap region is highly successful.
+It is promising to see that the GNN-based algorithm works well on simulated particle collision events produced by the TrackML detector, which have significant track multiplicity. The proposed GNN algorithm is successful in identifying outlier edge connections in an iterative manner, as well as successful in extracting track candidates for the endcap regions. 
 
-Neighbourhood complexity is inferred by the network, this is observed as the GNN algorithm automatically initiates the pattern recognition process in regions where outlier connections are easily identifiable. The network starts with low density regions (both endcap regions) and gradually progresses towards higher density areas (the transition between the barrel and endcap layers). This shows that the GNN algorithm behaves as expected.
+Neighbourhood complexity is inferred by the network; this is observed as the GNN algorithm automatically initiates the pattern recognition process in regions where outlier connections are easily identifiable. The network starts with low density regions (both endcap regions) and gradually progresses towards higher density areas (the transition between the barrel and endcap layers). This shows that the GNN algorithm behaves as expected, facilitating the “simple-to-complex” approach of this iterative technique.
 
-However the algorithm requires significant refinement and further improvement for application to the pixel barrel region. A deeper understanding is needed in order to evaluate the behaviour of the network on the pixel barrel region and assess the quality of its performance. Further work would include improvement of Stage 2 of the GNN algorithm in order to improve the TPR and TNR, as well as analysis of the remaining network within the barrel region.
+The application of the KF is successful for both implementations within the track state extrapolation and track extraction stages. The linear model is extremely robust for extraction of track candidates with high $p_{\text{T}}$ values, and hence trajectories that exhibit low levels of curvature. When considering adjacent detector layers, the difference in radius of the layers is small such that particle motion can be modelled linearly. In this way, one can implement the simplest approach. The addition of the OU process noise to model the influence of the magnetic field on the particle’s trajectory as a correlated noise is successful in the transverse plane, and requires the KF to be extended by one extra dimension. 
+
+It is an encouraging result that this methodology provides a high performance for fully contained tracks within the endcap volume, achieving 93.3\% average track reconstruction efficiency for tracks with $p_{\text{T}} >$ 1 GeV averaged over 50 simulated TrackML events. The average track purity and average particle purity achieved were 99.0\% for both quantities. Overall, the application to the endcap region is highly successful and as such we can successfully reconstruct tracks using our iterative approach
+
+However the algorithm requires significant refinement and further improvements for application to the pixel barrel region. A deeper understanding is needed in order to evaluate the behaviour of the network on the pixel barrel region and assess the quality of its performance. During stage 1, using GMR via clustering with a $k = 1$ model works very well in identification of outlier edges. This implementation models the distribution at each node as a single peak with some noisy connections. However, this does not account for the more general case where there is a region that may represent the intersection of two or more tracks. A method to devise the handling of intersecting tracks would be a further extension to the algorithm.
+
+Furthermore, an in-depth analysis of the remaining network during the second stage of the algorithm, particularly within the barrel region, would need to be immediately addressed. This would aid in improving the TPR and TNR metrics, as well as candidate extractions within the barrel. In addition to this, an aspect that has not yet been considered would be to implement dynamic hyperparameters; the main controls for the thresholds during stage 2 of the algorithm include the use of the $\chi^{2}$ and KL distances between the node state measurements and the state projections. As the iterations increase, a larger radius of neighbourhood information is aggregated, such that the combined distributions become wider. However, the current setup uses static distance thresholds that do not reflect the changing state of the remaining network. The use of dynamic hyperparameters can allow the implementation of both relaxed and strict thresholds dependent on the remaining network. Finally, the use of other techniques, such as community detection and improving the extrapolation model, may also aid in resolving outlier edge connections particularly for the barrel region.
+
