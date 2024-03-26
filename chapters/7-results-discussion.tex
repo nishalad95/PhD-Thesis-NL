@@ -179,7 +179,7 @@ Executing the GNN algorithm on 50 simulated TrackML events, the average track re
 
 \subsection{Execution Times}
 
-The GNN algorithm was executed on a MacOS machine, M1 Pro chip, 16 GB RAM, with no multithreaded functions. The average minimum execution time for the GNN algorithm to process 1 event in volume 7 of the TrackML detector, across a total of 50 simulated events, was 45.6 s. Table \ref{tab:trackml-endcap-execution-times} and Figure \ref{fig:execution-time-endcap-1} show the breakdown of execution time for each stage of the GNN algorithm. The initialization of the graph network takes up the majority of the execution time, while the remaining algorithmic components comprise 15.9 s in execution time. Graph network initialization comprises a conversion of TrackML hit data to nodes and edges, as well as construction of track state estimates $X_{ij}$ and covariances $C_{ij}$. Reading and writing into the graph network implemented using the NetworkX library contributes a significant proportion of execution time, whereas the execution time for each stage of the GNN algorithm, is notably small.
+The GNN algorithm was executed on a MacOS machine, M1 Pro chip, 16 GB RAM, with no multithreading. The average minimum execution time for the GNN algorithm to process 1 event in volume 7 of the TrackML detector, across a total of 50 simulated events, was 45.6 s. Table \ref{tab:trackml-endcap-execution-times} and Figure \ref{fig:execution-time-endcap-1} show the breakdown of execution time for each stage of the GNN algorithm. The initialization of the graph network takes up the majority of the execution time, while the remaining algorithmic components comprise 15.9 s in execution time. Graph network initialization comprises a conversion of TrackML hit data to nodes and edges, as well as construction of track state estimates $X_{ij}$ and covariances $C_{ij}$. Reading and writing into the graph network implemented using the NetworkX library contributes a significant proportion of execution time, whereas the execution time for each stage of the GNN algorithm, is notably small.
 
 \begin{table}[!htbp]
 \caption{Breakdown of execution time and cumulative execution time for each stage of the GNN algorithm applied to volume 7 of the TrackML detector.}
@@ -199,12 +199,14 @@ Track Extraction 2              & 4.4   & 45.6   &  9.6    \\
 \label{tab:trackml-endcap-execution-times}
 \end{table}
 
-\begin{figure}[htbp]
+\begin{figure}[!htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/7-results/execution-time-endcap-1.png}
-    \caption{Pie-chart of execution time for each stage of the GNN algorithm applied to volume 7 of the TrackML detector.}
+    \includegraphics[width=0.95\textwidth]{images/7-results/execution-time-endcap-1.png}
+    \caption{Breakdown of execution time for each stage of the GNN algorithm applied to volume 7 of the TrackML detector.}
     \label{fig:execution-time-endcap-1}%
 \end{figure}
+
+It is difficult to make direct comparisons of execution times to benchmark results, as the work presented in this thesis considers a suboptimal application of the GNN algorithm to the Pixel endcap region of the TrackML detector. However, to provide the reader with context, a comparison can be made to the study provided in Ref \cite{Aad:2867892}. This work describes the major changes to the ATLAS Run-2 software to reconstruct high-activity collisions. The performance of the key components of the track reconstruction chain are evaluated. The average CPU time required per event for the ID track finding for all Pixel and SCT layers for events with $<\mu>$ = 60, is approximately 5000 ms for the ATLAS legacy software, and approximately 1000 ms for the updated reconstruction strategy. All studies described in this paper were run with an AMD EPYCTM 7302 16-core processor, running CERN CENTOS 7 in single-thread mode.
 
 
 
@@ -276,7 +278,7 @@ The TPR for identification of correct outlier edges achieved was 92.3\%, and the
     \label{fig:confusion-matrix-barrel-endcap-stage-1}%
 \end{figure}
 
-The confusion matrix for Stage 2 of the GNN algorithm applied to the pixel barrel and endcap regions is shown in Figure \ref{fig:confusion-matrix-barrel-endcap-stage-2}.
+The confusion matrix for Stage 2 of the GNN algorithm applied to the pixel barrel and endcap regions is shown in Figure \ref{fig:confusion-matrix-barrel-endcap-stage-2}. The TPR for identification of correct outlier edges, and hence the recall, achieved was 48.1\%, and the TNR in identification of good edges achieved was 46.1\%. With respect to MC ground truth, the precision in correct outlier edges identified during Stage 2 was found to be 67.5\%. In comparison to the prediction summary for Stage 1 shown in Figure \ref{fig:confusion-matrix-barrel-endcap-stage-1}, the second stage of the GNN algorithm does not discriminate between both classes as well as Stage 1, as there is a much greater proportion of false positives and false negatives. This suggests that the algorithm begins to falsely predict a greater proportion of outlier edges, which will then affect the network connections in further algorithm stages.
 
 
 \begin{figure}[htbp]
@@ -286,7 +288,6 @@ The confusion matrix for Stage 2 of the GNN algorithm applied to the pixel barre
     \label{fig:confusion-matrix-barrel-endcap-stage-2}%
 \end{figure}
 
-For Stage 2, the TPR for identification of correct outlier edges, and hence the recall, achieved was 48.1\%, and the TNR in identification of good edges achieved was 46.1\%. With respect to MC ground truth, the precision in correct outlier edges identified during Stage 2 was found to be 67.5\%. In comparison to the prediction summary for Stage 1 shown in Figure \ref{fig:confusion-matrix-barrel-endcap-stage-1}, the second stage of the GNN algorithm does not discriminate between both classes as well as Stage 1, as there is a much greater proportion of false positives and false negatives. This suggests that the algorithm begins to falsely predict a greater proportion of outlier edges, which will then affect the network connections in further algorithm stages.
 
 
 
@@ -395,9 +396,7 @@ If a subgraph does not meet the criteria to qualify as a good track candidate ou
     \label{fig:community-detection}
 \end{figure}
 
-Figure \ref{fig:community-detection-1} shows a small subset of nodes from a TrackML event and its corresponding edges connected as one subgraph. The general shape of the network gives an indication that the tracks originate from the left-hand side, where the trajectories move towards the right-hand side. The results of application of Community Detection are shown in Figure \ref{fig:community-detection-2}. In this instance, the Community Detection was successful to partition the network into a total of seven subgraphs shown by separate colours. Six of these subgraphs met the criteria for a good track candidate, and a single track fragment was also formed shown by the grey subgraph containing two nodes. However upon further investigation, this procedure did not work successfully in all cases, specifically in dense environments, and the algorithm was found to not utilize node properties during network partition. Therefore, as this procedure needed further refinement, it was not implemented into the main GNN pattern recognition algorithm. 
-
-A technique such as Community Detection is advantageous for a problem such as track splitting, as it provides fast convergence in track extraction, given that the algorithm is adapted for highly dense environments.
+Figure \ref{fig:community-detection-1} shows a small subset of nodes from a TrackML event and its corresponding edges connected as one subgraph. The general shape of the network gives an indication that the tracks originate from the left-hand side, where the trajectories move towards the right-hand side. The results of application of Community Detection are shown in Figure \ref{fig:community-detection-2}. In this instance, the Community Detection was successful to partition the network into a total of seven subgraphs shown by separate colours. Six of these subgraphs met the criteria for a good track candidate, and a single track fragment was also formed shown by the grey subgraph containing two nodes. However upon further investigation, this procedure did not work successfully in all cases, specifically in dense environments, and the algorithm was found to not utilize node properties during network partition. Therefore, as this procedure needed further refinement, it was not implemented into the main GNN pattern recognition algorithm. A technique such as Community Detection is advantageous for track splitting, as it provides fast convergence in extraction, given that the algorithm is adapted for highly dense environments.
 
 
 
@@ -406,13 +405,11 @@ A technique such as Community Detection is advantageous for a problem such as tr
 
 \section{Conclusion}
 
-It is promising to see that the GNN-based algorithm works well on simulated particle collision events produced by the TrackML detector, which have significant track multiplicity. The proposed GNN algorithm is successful in identifying outlier edge connections in an iterative manner, as well as successful in extracting track candidates for the endcap regions. 
-
-Neighbourhood complexity is inferred by the network; this is observed as the GNN algorithm automatically initiates the pattern recognition process in regions where outlier connections are easily identifiable. The network starts with low density regions (both endcap regions) and gradually progresses towards higher density areas (the transition between the barrel and endcap layers). This shows that the GNN algorithm behaves as expected, facilitating the “simple-to-complex” approach of this iterative technique.
+It is promising to see that the GNN-based algorithm works well on simulated particle collision events produced by the TrackML detector, which have significant track multiplicity. The proposed GNN algorithm is successful in identifying outlier edge connections in an iterative manner, as well as successful in extracting track candidates for the endcap regions. Neighbourhood complexity is inferred by the network; this is observed as the GNN algorithm automatically initiates the pattern recognition process in regions where outlier connections are easily identifiable. The network starts with low density regions (both endcap regions) and gradually progresses towards higher density areas (the transition between the barrel and endcap layers). This shows that the GNN algorithm behaves as expected, facilitating the “simple-to-complex” approach of this iterative technique.
 
 The application of the KF is successful for both implementations within the track state extrapolation and track extraction stages. The linear model is extremely robust for extraction of track candidates with high $p_{\text{T}}$ values, and hence trajectories that exhibit low levels of curvature. When considering adjacent detector layers, the difference in radius of the layers is small such that particle motion can be modelled linearly. In this way, one can implement the simplest approach. The addition of the OU process noise to model the influence of the magnetic field on the particle’s trajectory as a correlated noise is successful in the transverse plane, and requires the KF to be extended by one extra dimension. 
 
-It is an encouraging result that this methodology provides a high performance for fully contained tracks within the endcap volume, achieving 93.3\% average track reconstruction efficiency for tracks with $p_{\text{T}} >$ 1 GeV averaged over 50 simulated TrackML events. The average track purity and average particle purity achieved were 99.0\% for both quantities. Overall, the application to the endcap region is highly successful and as such we can successfully reconstruct tracks using our iterative approach
+It is an encouraging result that this methodology provides a high performance for fully contained tracks within the endcap volume, achieving 93.3\% average track reconstruction efficiency for tracks with $p_{\text{T}} >$ 1 GeV averaged over 50 simulated TrackML events. The average track purity and average particle purity achieved were 99.0\% for both quantities. Overall, the application to the endcap is successful and tracks can be successfully reconstructed using this iterative approach.
 
 However the algorithm requires significant refinement and further improvements for application to the pixel barrel region. A deeper understanding is needed in order to evaluate the behaviour of the network on the pixel barrel region and assess the quality of its performance. During stage 1, using GMR via clustering with a $k = 1$ model works very well in identification of outlier edges. This implementation models the distribution at each node as a single peak with some noisy connections. However, this does not account for the more general case where there is a region that may represent the intersection of two or more tracks. A method to devise the handling of intersecting tracks would be a further extension to the algorithm.
 
